@@ -14,7 +14,7 @@ namespace Domain
 
     public class Merchant: User
 	{
-        public Guid MerchantID { get; set; }
+        public Guid Id { get; set; }
         public ICollection<Store> Stores { get; set; }
     }
 }

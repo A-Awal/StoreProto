@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    partial class AppDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230312212754_Workin-On-Inheritance-two")]
+    partial class WorkinOnInheritancetwo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +27,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Merchant", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("MerchantID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("UserId");
@@ -48,7 +51,7 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("MerchantID");
 
                     b.ToTable("Users", (string)null);
 
@@ -134,6 +137,10 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Customer", b =>
                 {
                     b.HasBaseType("Domain.Merchant");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("MerchanID");
 
                     b.Property<string>("Username")
                         .HasColumnType("text");

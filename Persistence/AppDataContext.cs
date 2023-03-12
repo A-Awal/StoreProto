@@ -7,8 +7,8 @@ public class AppDataContext: DbContext
     public AppDataContext(DbContextOptions<AppDataContext> options): base(options)
     { }
 
-    public virtual DbSet<Merchant> Merchants { get; set; }
-    public virtual DbSet<Customer> Customers { get; set; }
+    public  DbSet<Merchant> Merchants { get; set; }
+    public  DbSet<Customer> Customers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
@@ -18,17 +18,12 @@ public class AppDataContext: DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Merchant>( m => {
             m.ToTable("Users");
-            m.Property( m => m.MerchantID)
+            m.Property( m => m.Id)
             .HasColumnName("UserId");
-            m.HasKey(m => m.MerchantID);
+            m.HasKey(m => m.Id);
             m.HasDiscriminator(m => m.UserType);
         });
-        modelBuilder.Entity<Customer>(
-            entity => {
-                entity.Property( c => c.CustomerId)
-                .HasColumnName("MerchanID");
-            }
-        );
+        modelBuilder.Entity<Customer>();
         modelBuilder.Entity<Product>().HasKey(p => p.ProductId);
         modelBuilder.Entity<Store>( s => 
         {

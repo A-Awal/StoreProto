@@ -114,37 +114,37 @@ namespace Persistence
             {
                 new Store
                 {
-                    MerchantId = mer[1].MerchantID,
+                    MerchantId = mer[1].Id,
                     StoreCategory = "Inventory",
 
                 },
                 new Store
                 {
-                    MerchantId = mer[1].MerchantID,
+                    MerchantId = mer[1].Id,
                     StoreCategory = "someOther",
 
                 },
                 new Store
                 {
-                    MerchantId = mer[4].MerchantID,
+                    MerchantId = mer[4].Id,
                     StoreCategory = "Please Suggest",
 
                 },
                 new Store
                 {
-                    MerchantId = mer[4].MerchantID,
+                    MerchantId = mer[4].Id,
                     StoreCategory = "I don't Know",
 
                 },
                 new Store
                 {
-                    MerchantId = mer[0].MerchantID,
+                    MerchantId = mer[0].Id,
                     StoreCategory = "Don't as me that again",
 
                 },
                 new Store
                 {
-                    MerchantId = mer[2].MerchantID,
+                    MerchantId = mer[2].Id,
                     StoreCategory = "I Vex now",
 
                 },
@@ -206,49 +206,49 @@ namespace Persistence
             {
                 new Order
                 { 
-                    CustomerId = cus[3].CustomerId,
+                    CustomerId = cus[3].Id,
                     DateOrdered = DateTime.UtcNow.AddDays(9),
                     ProductId = pro[1].ProductId,
                     QuantityOrdered = 30,
                 },
                 new Order
                 {
-                    CustomerId = cus[2].CustomerId,
+                    CustomerId = cus[2].Id,
                     DateOrdered = DateTime.UtcNow.AddDays(5),
                     ProductId = pro[4].ProductId,                   
                     QuantityOrdered = 5,
                 },
                 new Order
                 {
-                    CustomerId = cus[3].CustomerId,
+                    CustomerId = cus[3].Id,
                     DateOrdered = DateTime.UtcNow.AddDays(1),
                     ProductId = pro[3].ProductId,
                     QuantityOrdered = 10,
                 },
                 new Order
                 {
-                    CustomerId = cus[2].CustomerId,
+                    CustomerId = cus[2].Id,
                     DateOrdered = DateTime.UtcNow,
                     ProductId = pro[0].ProductId,
                     QuantityOrdered = 15,
                 },
                 new Order
                 {
-                    CustomerId = cus[0].CustomerId,
+                    CustomerId = cus[0].Id,
                     DateOrdered = DateTime.UtcNow.AddDays(2),
                     ProductId = pro[4].ProductId,
                     QuantityOrdered = 30,
                 },
                 new Order
                 {
-                    CustomerId = cus[3].CustomerId,
+                    CustomerId = cus[3].Id,
                     DateOrdered = DateTime.UtcNow.AddDays(2),
                     ProductId = pro[1].ProductId,
                     QuantityOrdered = 30,
                 },
                 new Order
                 {
-                    CustomerId = cus[0].CustomerId,
+                    CustomerId = cus[0].Id,
                     DateOrdered = DateTime.UtcNow.AddDays(0),
                     ProductId = pro[1].ProductId,
                     QuantityOrdered = 30,
