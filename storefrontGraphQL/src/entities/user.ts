@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
 } from "typeorm";
 import { Person } from "./utils/credential";
-import { Business } from "./business";
+import { Store } from "./business";
 import { Order } from "./order";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -47,11 +47,11 @@ export class User extends Person {
   @OneToOne(() => Order, (order) => order.user, { nullable: true })
   order: Order;
 
-  @Field(() => [Business])
-  @OneToMany(() => Business, (business) => business.user, {
+  @Field(() => [Store])
+  @OneToMany(() => Store, (business) => business.user, {
     nullable: true,
   })
-  business: Business[];
+  business: Store[];
 
   @Field()
   @CreateDateColumn()

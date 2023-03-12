@@ -17,15 +17,15 @@ enum BusinessType {
   Finance = "Financial Services",
 }
 @ObjectType()
-@Entity("business")
-export class Business extends BaseEntity {
+@Entity("Store")
+export class Store extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  StoreId: string;
 
   @Field()
   @Column()
-  business_name: string;
+  StoreName: string;
 
   @Field()
   @Column()
@@ -35,8 +35,8 @@ export class Business extends BaseEntity {
   @JoinColumn({name: "user_id"})
   user: User;
 
-  @OneToMany(() => Product, (product) => product.business, {
+  @OneToMany(() => Product, (product) => product.Store, {
     nullable: true,
   })
-  product: Product[];
+  Inventory: Product[];
 }

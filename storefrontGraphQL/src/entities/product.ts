@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
 } from "typeorm";
-import { Business } from "./business";
+import { Store } from "./business";
 import { Order } from "./order";
 import {ObjectType, Field} from 'type-graphql';
 
@@ -22,36 +22,36 @@ enum Category {
 export class Product extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  id: number;
+  ProductId: number;
 
   @Field()
   @Column()
-  name: string;
+  ProductName: string;
 
   @Field()
   @Column()
-  category: Category;
+  ProductCategory: Category;
 
   @Field()
   @Column()
-  description: string;
+  ProductDescription: string;
 
   @Field()
   @Column()
-  unit: string;
+  UnitOfMeasurement: string;
 
   @Field()
   @Column()
-  quantity: string;
+  Quantity: string;
 
   @Field( () => [Order])
   @ManyToMany(() => Order, (order) => order.products)
-  orders: Order[];
+  Orders: Order[];
 
-  @Field(() => Business)
-  @ManyToOne(() => Business, (business) => business.product, { nullable: true, onDelete: "CASCADE" })
+  @Field(() => Store)
+  @ManyToOne(() => Store, (store) => store.Inventory, { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({
     name: "business_id",
   })
-  business: Business;
+  Store: Store;
 }
