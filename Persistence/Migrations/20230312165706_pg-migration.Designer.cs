@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20230309073928_changed-to-fluentApi")]
-    partial class changedtofluentApi
+    [Migration("20230312165706_pg-migration")]
+    partial class pgmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

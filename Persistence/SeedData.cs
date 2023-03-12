@@ -207,49 +207,49 @@ namespace Persistence
                 new Order
                 { 
                     CustomerId = cus[3].CustomerId,
-                    DateOrdered = new DateTime().AddDays(9),
+                    DateOrdered = DateTime.UtcNow.AddDays(9),
                     ProductId = pro[1].ProductId,
                     QuantityOrdered = 30,
                 },
                 new Order
                 {
                     CustomerId = cus[2].CustomerId,
-                    DateOrdered = new DateTime().AddDays(5),
+                    DateOrdered = DateTime.UtcNow.AddDays(5),
                     ProductId = pro[4].ProductId,                   
                     QuantityOrdered = 5,
                 },
                 new Order
                 {
                     CustomerId = cus[3].CustomerId,
-                    DateOrdered = new DateTime().AddDays(1),
+                    DateOrdered = DateTime.UtcNow.AddDays(1),
                     ProductId = pro[3].ProductId,
                     QuantityOrdered = 10,
                 },
                 new Order
                 {
                     CustomerId = cus[2].CustomerId,
-                    DateOrdered = new DateTime(),
+                    DateOrdered = DateTime.UtcNow,
                     ProductId = pro[0].ProductId,
                     QuantityOrdered = 15,
                 },
                 new Order
                 {
                     CustomerId = cus[0].CustomerId,
-                    DateOrdered = new DateTime().AddDays(2),
+                    DateOrdered = DateTime.UtcNow.AddDays(2),
                     ProductId = pro[4].ProductId,
                     QuantityOrdered = 30,
                 },
                 new Order
                 {
                     CustomerId = cus[3].CustomerId,
-                    DateOrdered = new DateTime().AddDays(2),
+                    DateOrdered = DateTime.UtcNow.AddDays(2),
                     ProductId = pro[1].ProductId,
                     QuantityOrdered = 30,
                 },
                 new Order
                 {
                     CustomerId = cus[0].CustomerId,
-                    DateOrdered = new DateTime(),
+                    DateOrdered = DateTime.UtcNow.AddDays(0),
                     ProductId = pro[1].ProductId,
                     QuantityOrdered = 30,
                 },

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class pgmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -72,7 +72,7 @@ namespace Persistence.Migrations
                     ProductName = table.Column<string>(type: "text", nullable: true),
                     ProductDescription = table.Column<string>(type: "text", nullable: true),
                     ProductCategory = table.Column<string>(type: "text", nullable: true),
-                    Unit = table.Column<string>(type: "text", nullable: true),
+                    UnitOfMeasurement = table.Column<string>(type: "text", nullable: true),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     StoreId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
