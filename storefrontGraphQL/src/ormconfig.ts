@@ -5,19 +5,21 @@ import { Business } from "./entities/business";
 import { Product } from "./entities/product";
 import { Order } from "./entities/order";
 import { Token } from "./entities/token";
-
+"Server=ep-mute-pine-009922.us-west-2.aws.neon.tech; Port=5432; User Id=A-Awal; Password=G3LrmV0yWMio; Database=neondb"
 const config: DataSourceOptions = {
   type: "postgres",
-  host: "localhost",
+  host: "ep-mute-pine-009922.us-west-2.aws.neon.tech",
   port: 5432,
-  username: 'postgres',
-  password: "mantiq#1",
-  database: 'postgres',
+  username: 'A-Awal',
+  password: "G3LrmV0yWMio",
+  database: 'neondb',
   entities: [User, Business, Product, Order, Token],
   migrations: [__dirname + "/migrations/*{.ts,.js}"],
   synchronize: true,
+  ssl: true,
   migrationsRun: false,
   logging: true,
+  // dropSchema: true
 };
 
 export default config;

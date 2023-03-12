@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Business } from "./business";
 import { Order } from "./order";
-import {ObjectType, Field} from 'type-graphql'
+import {ObjectType, Field} from 'type-graphql';
 
 enum Category {
   Blog = "Blog",
