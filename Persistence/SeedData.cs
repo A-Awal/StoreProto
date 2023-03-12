@@ -23,7 +23,7 @@ namespace Persistence
                         LastName = "Poolo",
                         PhoneNumber = "0298827",
                         Username = "Chipoolopoolo",
-                        PassWord = "Pa$$w0rd",
+                        Password = "Pa$$w0rd",
                     },
                      new Customer
                     {
@@ -32,7 +32,7 @@ namespace Persistence
                         LastName = "ata",
                         PhoneNumber = "0298827",
                         Username = "Boleeta",
-                        PassWord = "Pa$$w0rd",
+                        Password = "Pa$$w0rd",
                     },
                       new Customer
                     {
@@ -41,7 +41,7 @@ namespace Persistence
                         LastName = "Gire",
                         PhoneNumber = "0298827",
                         Username = "Girigiri",
-                        PassWord = "Pa$$w0rd",
+                        Password = "Pa$$w0rd",
                     },
                        new Customer
                     {
@@ -50,7 +50,7 @@ namespace Persistence
                         LastName = "Fawat",
                         PhoneNumber = "0298827",
                         Username = "Fawwat",
-                        PassWord = "Pa$$w0rd",
+                        Password = "Pa$$w0rd",
                     },
 
                 };
