@@ -10,7 +10,7 @@ export class Order extends BaseEntity {
   id: number;
 
   @Field(() => [Product])
-  @ManyToMany(() => Product, (product) => product.orders)
+  @ManyToMany(() => Product, (product) => product.Orders)
   @JoinTable({
     name: "orders_product",
     joinColumn: {

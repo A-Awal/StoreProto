@@ -1,7 +1,7 @@
 
 import { DataSourceOptions } from "typeorm";
 import { User } from "./entities/user";
-import { Business } from "./entities/business";
+import { Store } from "./entities/business";
 import { Product } from "./entities/product";
 import { Order } from "./entities/order";
 import { Token } from "./entities/token";
@@ -13,7 +13,7 @@ const config: DataSourceOptions = {
   username: 'A-Awal',
   password: "G3LrmV0yWMio",
   database: 'neondb',
-  entities: [User, Business, Product, Order, Token],
+  entities: [User, Store, Product, Order, Token],
   migrations: [__dirname + "/migrations/*{.ts,.js}"],
   synchronize: true,
   ssl: true,

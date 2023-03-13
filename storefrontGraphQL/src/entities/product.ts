@@ -45,7 +45,7 @@ export class Product extends BaseEntity {
   Quantity: string;
 
   @Field( () => [Order])
-  @ManyToMany(() => Order, (order) => order.products)
+  @ManyToMany(() => Order, (Order) => Order.products)
   Orders: Order[];
 
   @Field(() => Store)

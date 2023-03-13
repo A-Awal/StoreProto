@@ -3,14 +3,9 @@ import express, { NextFunction, Response, Request } from "express";
 import {ApolloServer} from "apollo-server-express";
 import {buildSchema} from 'type-graphql';
 import { initializeDatabase } from "./config/db";
-import pgSession from "connect-pg-simple";
-import session from "express-session";
-
-
-import { Pool } from "pg";
+const  ProductAPI = require('./DataSources/dataSources');
 
 import "./config/passport.config";
-import { Console } from "console";
 
 async function main() 
 {
@@ -21,6 +16,9 @@ async function main()
   const apolloServer = new ApolloServer({
   schema,
   context: ({req, res}: any) => ({req, res}),
+  dataSources: () => ({
+      productAPI: new ProductAPI(),
+  }),
 
   });
 
