@@ -13,5 +13,6 @@ namespace Domain
 		public Product Product { get; set; }
 		public int QuantityOrdered { get; set; }
 		public DateTime DateOrdered { get; set; }
+		
 	}
 }
