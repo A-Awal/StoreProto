@@ -17,7 +17,7 @@ namespace Application.Product
             RuleFor(x => x.ProductCategory).NotEmpty();
             RuleFor(x => x.Unit).NotNull();
             RuleFor(x => x.Quantity).NotEmpty();
-            RuleFor(x => x.StoreId).NotNull();
+            // RuleFor(x => x.StoreId).NotNull();
         }
     }
 }
