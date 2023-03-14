@@ -1,4 +1,5 @@
-﻿using Application.Product;
+﻿using Application.Order;
+using Application.Product;
 using AutoMapper;
 
 namespace Application.Core
@@ -7,9 +8,13 @@ namespace Application.Core
     {
         public AutoMapperProfile()
         {
+            CreateMap<ProductDto, Domain.Product>();
             CreateMap<Domain.Product, ProductDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId));
-                    CreateMap<ProductDto, Domain.Product>();
+
+            CreateMap<Domain.Order, OrderDto>();
+            CreateMap<OrderDto, Domain.Order>();
+
         }
 
        
