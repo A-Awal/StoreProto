@@ -12,7 +12,7 @@ public class Product
 	public int Quantity { get; set; }
 	public Guid StoreId { get; set; }
 	public Store Store { get; set; }
-	public List<Order> Orders { get; set; }
+	public List<Purchase> Purchases { get; set; }
 	public ICollection<CustomerReview> Reviews { get; set; } = new List<CustomerReview>();
 
 }

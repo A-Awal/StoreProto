@@ -1,4 +1,5 @@
 using Application.Core;
+using Application.Purchase;
 using AutoMapper;
 using MediatR;
 using Persistence;
@@ -9,7 +10,7 @@ namespace Application.Order
     {
         public class Command : IRequest<Result<String>>
         {
-            public OrderDto orderDto { get; set; }
+            public PurchaseDto purchaseDto { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<String>>
@@ -25,15 +26,15 @@ namespace Application.Order
 
             public async Task<Result< String>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var productToOrder = await _context.Products.FindAsync(request.orderDto.ProductId);
+                var productToOrder = await _context.Products.FindAsync(request.purchaseDto.ProductId);
                 if(productToOrder== null || productToOrder.Quantity <= 0 )
                 {
                     return Result<String>.Failure("Please we are out of stock");
                 }
 
                 try{
-                    var order = _mapper.Map<Domain.Order>(request.orderDto);
-                    _context.Orders.Add(order);
+                    var purchase = _mapper.Map<Domain.Purchase>(request.purchaseDto);
+                    _context.Purchases.Add(purchase);
                     var success = await _context.SaveChangesAsync() > 0;
                     if(success) return Result<String>.Success("Order made successfully");
                     return Result<String>.Failure("Sorry try ordering again"); 
