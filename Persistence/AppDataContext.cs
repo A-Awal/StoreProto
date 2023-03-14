@@ -12,6 +12,8 @@ public class AppDataContext: DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
+    public DbSet<CustomerReview> Reviews { get; set; }
+    public DbSet<ReviewReply> ReviewReplies { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,6 +57,31 @@ public class AppDataContext: DbContext
 
             }
         );
+
+        modelBuilder.Entity<CustomerReview>(
+            entity => {
+                entity.HasKey(r => r.ReviewId);
+
+                entity.HasOne<Product>(r => r.Product)
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(r => r.ProductId);
+
+                entity.HasOne<Customer>(r => r.Customer)
+                .WithMany(c => c.ProductReviews)
+                .HasForeignKey(r => r.CustomerId);
+            }
+        );
+
+        modelBuilder.Entity<ReviewReply>(
+            entity => {
+                entity.HasKey(rr => new {rr.MerchantId, rr.ReviewId});
+                
+                entity.HasOne<Merchant>(rr => rr.Merchant)
+                .WithMany(r => r.ReviewReplies)
+                .HasForeignKey( rr => rr.MerchantId);
+            }
+        );
+
     }
 
 }

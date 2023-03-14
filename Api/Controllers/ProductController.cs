@@ -1,8 +1,6 @@
 ﻿using Api.Controllers;
-using Application.Core;
 using Application.Product;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -17,9 +15,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProduct()
+        public async Task<IActionResult> GetProduct(string searchTerm)
         {
-            return HandleResult(await _mediator.Send(new Products.Query { }));
+            return HandleResult(await _mediator.Send(new Products.Query { SearchTerm = searchTerm }));
         }
 
         [HttpPost]

@@ -7,5 +7,6 @@ namespace Domain
 	{
 		public string Username { get; set; }
 		public ICollection<Order> Orders { get; set; }
+		public ICollection<CustomerReview> ProductReviews {get; set;} = new List<CustomerReview>();
 	}
 }

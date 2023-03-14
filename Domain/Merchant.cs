@@ -17,5 +17,6 @@ namespace Domain
 	{
         public Guid Id { get; set; }
         public ICollection<Store> Stores { get; set; }
+		public ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
     }
 }

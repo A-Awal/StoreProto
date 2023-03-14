@@ -3,6 +3,7 @@ using Persistence;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Application.Core;
+using AutoMapper.QueryableExtensions;
 
 namespace Application.Product
 {
@@ -10,6 +11,7 @@ namespace Application.Product
     {
         public class Query:IRequest<Result<List<ProductDto>>>
         {
+            public string SearchTerm { get; set; }
 
         }
 
@@ -26,10 +28,16 @@ namespace Application.Product
 
             public async Task<Result<List<ProductDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                 List<ProductDto> products = await _dataContext.Products
-                    .Select(p => _mapper.Map<ProductDto>(p))
-                    .ToListAsync();
+                 var query =  _dataContext.Products
+                    .OrderBy( p => p.ProductName)
+                    .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
+                    .AsQueryable();
                 
+                if(!String.IsNullOrEmpty(request.SearchTerm))
+                {
+                    query = query.Where(p => p.ProductName.Contains(request.SearchTerm));
+                }
+                var products = await query.ToListAsync();
                 return Result<List<ProductDto>>.Success(products);
             }
         }
