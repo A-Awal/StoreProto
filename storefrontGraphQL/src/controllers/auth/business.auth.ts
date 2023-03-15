@@ -4,9 +4,9 @@ import { ApiContext } from '../graphqlTypes/context';
 import { ProductDto } from '../graphqlTypes/productDto';
 
 @Resolver()
-export class BusinessRegistrationReolver{
+export class ProductResolver{
   @Query(() => [ProductDto])
-  async Hello(@Ctx() context: ApiContext)
+  async products(@Ctx() context: ApiContext)
   {
     return context.dataSources.productAPI.getProducts();
   }
