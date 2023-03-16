@@ -9,7 +9,7 @@ public class AppDataContext: DbContext
 
     public  DbSet<Merchant> Merchants { get; set; }
     public  DbSet<Customer> Customers { get; set; }
-    public DbSet<Order> Orders { get; set; }
+    public DbSet<Purchase> Purchases { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<CustomerReview> Reviews { get; set; }
@@ -42,17 +42,17 @@ public class AppDataContext: DbContext
         });
 
 
-        modelBuilder.Entity<Order>( 
-            o =>
+        modelBuilder.Entity<Purchase>( 
+            entity =>
             {
-            o.HasKey(d => new { d.CustomerId, d.DateOrdered });
+            entity.HasKey(d => new { d.CustomerId, d.DatePurchased });
 
-            o.HasOne<Product>(d => d.Product)
-            .WithMany(p => p.Orders)
+            entity.HasOne<Product>(d => d.Product)
+            .WithMany(p => p.Purchases)
             .HasForeignKey(o => o.ProductId);
 
-            o.HasOne<Customer>()
-            .WithMany( o => o.Orders)
+            entity.HasOne<Order>()
+            .WithMany( o => o.Purchases)
             .HasForeignKey(o => o.CustomerId);
 
             }

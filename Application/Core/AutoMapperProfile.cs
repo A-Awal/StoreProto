@@ -1,4 +1,5 @@
 ﻿using Application.Product;
+using Application.Purchase;
 using AutoMapper;
 
 namespace Application.Core
@@ -7,11 +8,14 @@ namespace Application.Core
     {
         public AutoMapperProfile()
         {
+            CreateMap<ProductDto, Domain.Product>();
             CreateMap<Domain.Product, ProductDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId));
-                    CreateMap<ProductDto, Domain.Product>();
-        }
 
+            CreateMap<Domain.Purchase, PurchaseDto>();
+            CreateMap<PurchaseDto, Domain.Purchase>();
+
+        }
        
     }
 }

@@ -1,11 +1,5 @@
 ﻿using Domain;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence
 {
@@ -202,60 +196,60 @@ namespace Persistence
             var pro = await context.Products.ToListAsync();
 
 
-            var orders = new List<Order>
+            var Purchases = new List<Purchase>
             {
-                new Order
+                new Purchase
                 { 
                     CustomerId = cus[3].Id,
-                    DateOrdered = DateTime.UtcNow.AddDays(9),
+                    DatePurchased = DateTime.UtcNow.AddDays(9),
                     ProductId = pro[1].ProductId,
-                    QuantityOrdered = 30,
+                    QuantityPurchased = 30,
                 },
-                new Order
+                new Purchase
                 {
                     CustomerId = cus[2].Id,
-                    DateOrdered = DateTime.UtcNow.AddDays(5),
+                    DatePurchased = DateTime.UtcNow.AddDays(5),
                     ProductId = pro[4].ProductId,                   
-                    QuantityOrdered = 5,
+                    QuantityPurchased = 5,
                 },
-                new Order
+                new Purchase
                 {
                     CustomerId = cus[3].Id,
-                    DateOrdered = DateTime.UtcNow.AddDays(1),
+                    DatePurchased = DateTime.UtcNow.AddDays(1),
                     ProductId = pro[3].ProductId,
-                    QuantityOrdered = 10,
+                    QuantityPurchased = 10,
                 },
-                new Order
+                new Purchase
                 {
                     CustomerId = cus[2].Id,
-                    DateOrdered = DateTime.UtcNow,
+                    DatePurchased = DateTime.UtcNow,
                     ProductId = pro[0].ProductId,
-                    QuantityOrdered = 15,
+                    QuantityPurchased = 15,
                 },
-                new Order
+                new Purchase
                 {
                     CustomerId = cus[0].Id,
-                    DateOrdered = DateTime.UtcNow.AddDays(2),
+                    DatePurchased = DateTime.UtcNow.AddDays(2),
                     ProductId = pro[4].ProductId,
-                    QuantityOrdered = 30,
+                    QuantityPurchased = 30,
                 },
-                new Order
+                new Purchase
                 {
                     CustomerId = cus[3].Id,
-                    DateOrdered = DateTime.UtcNow.AddDays(2),
+                    DatePurchased = DateTime.UtcNow.AddDays(2),
                     ProductId = pro[1].ProductId,
-                    QuantityOrdered = 30,
+                    QuantityPurchased = 30,
                 },
-                new Order
+                new Purchase
                 {
                     CustomerId = cus[0].Id,
-                    DateOrdered = DateTime.UtcNow.AddDays(0),
+                    DatePurchased = DateTime.UtcNow.AddDays(0),
                     ProductId = pro[1].ProductId,
-                    QuantityOrdered = 30,
+                    QuantityPurchased = 30,
                 },
 
             };
-            await context.Orders.AddRangeAsync(orders);
+            await context.Purchases.AddRangeAsync(Purchases);
             await context.SaveChangesAsync();
             
         }

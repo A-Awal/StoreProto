@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using MediatR;
+﻿using MediatR;
 using Application.Core;
 using FluentValidation.AspNetCore;
 using FluentValidation;
@@ -15,7 +14,6 @@ namespace API.Extensions
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<Create>();
-
 
             return services;
         }
