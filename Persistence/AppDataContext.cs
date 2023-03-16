@@ -43,15 +43,15 @@ public class AppDataContext: DbContext
 
 
         modelBuilder.Entity<Purchase>( 
-            o =>
+            entity =>
             {
-            o.HasKey(d => new { d.CustomerId, d.DatePurchased });
+            entity.HasKey(d => new { d.CustomerId, d.DatePurchased });
 
-            o.HasOne<Product>(d => d.Product)
+            entity.HasOne<Product>(d => d.Product)
             .WithMany(p => p.Purchases)
             .HasForeignKey(o => o.ProductId);
 
-            o.HasOne<Customer>()
+            entity.HasOne<Order>()
             .WithMany( o => o.Purchases)
             .HasForeignKey(o => o.CustomerId);
 
