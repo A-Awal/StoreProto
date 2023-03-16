@@ -1,5 +1,5 @@
-﻿using Application.Order;
-using Application.Product;
+﻿using Application.Product;
+using Application.Purchase;
 using AutoMapper;
 
 namespace Application.Core
@@ -12,11 +12,10 @@ namespace Application.Core
             CreateMap<Domain.Product, ProductDto>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId));
 
-            CreateMap<Domain.Order, OrderDto>();
-            CreateMap<OrderDto, Domain.Order>();
+            CreateMap<Domain.Purchase, PurchaseDto>();
+            CreateMap<PurchaseDto, Domain.Purchase>();
 
         }
-
        
     }
 }

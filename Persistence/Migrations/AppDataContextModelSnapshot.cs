@@ -92,23 +92,27 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Order", b =>
                 {
+                    b.Property<Guid>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateOrdered")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("QuantityOrdered")
+                    b.Property<int>("OrderState")
                         .HasColumnType("integer");
 
-                    b.HasKey("CustomerId", "DateOrdered");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric");
 
-                    b.HasIndex("ProductId");
+                    b.HasKey("OrderId");
 
-                    b.ToTable("Orders");
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Domain.Product", b =>
@@ -140,6 +144,35 @@ namespace Persistence.Migrations
                     b.HasIndex("StoreId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Domain.Purchase", b =>
+                {
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DatePurchased")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("PurchaseState")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuantityPurchased")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CustomerId", "DatePurchased");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Purchases");
                 });
 
             modelBuilder.Entity("Domain.ReviewReply", b =>
@@ -190,6 +223,9 @@ namespace Persistence.Migrations
                 {
                     b.HasBaseType("Domain.Merchant");
 
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Username")
                         .HasColumnType("text");
 
@@ -217,19 +253,13 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Order", b =>
                 {
-                    b.HasOne("Domain.Customer", null)
+                    b.HasOne("Domain.Customer", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Product", "Product")
-                        .WithMany("Orders")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Domain.Product", b =>
@@ -241,6 +271,31 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Domain.Purchase", b =>
+                {
+                    b.HasOne("Domain.Order", null)
+                        .WithMany("Purchases")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Product", "Product")
+                        .WithMany("Purchases")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.ReviewReply", b =>
@@ -285,9 +340,14 @@ namespace Persistence.Migrations
                     b.Navigation("Stores");
                 });
 
+            modelBuilder.Entity("Domain.Order", b =>
+                {
+                    b.Navigation("Purchases");
+                });
+
             modelBuilder.Entity("Domain.Product", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("Purchases");
 
                     b.Navigation("Reviews");
                 });
