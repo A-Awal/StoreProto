@@ -7,6 +7,7 @@ public class Product
 	public string ProductCategory { get; set; }
 	public string UnitOfMeasurement { get; set; }
 	public int Quantity { get; set; }
+	public Decimal UnitPrice { get; set; }
 	public Guid StoreId { get; set; }
 	public Store Store { get; set; }
 	public List<Purchase> Purchases { get; set; }

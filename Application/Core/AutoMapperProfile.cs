@@ -1,5 +1,7 @@
-﻿using Application.Product;
+﻿using Application.Order;
+using Application.Product;
 using Application.Purchase;
+using Application.Store;
 using AutoMapper;
 
 namespace Application.Core
@@ -15,7 +17,10 @@ namespace Application.Core
             CreateMap<Domain.Purchase, PurchaseDto>();
             CreateMap<PurchaseDto, Domain.Purchase>();
 
+            CreateMap<Domain.Purchase, OrderDto>();
+
+            CreateMap<Domain.Store, StoreDto>();
         }
-       
+
     }
 }

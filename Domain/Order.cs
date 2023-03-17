@@ -16,6 +16,7 @@ namespace Domain
     {
         processing,
         shipping,
-        delivered
+        delivered,
+        cart
     }
 }

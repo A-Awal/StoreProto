@@ -14,6 +14,8 @@ public class AppDataContext: DbContext
     public DbSet<Store> Stores { get; set; }
     public DbSet<CustomerReview> Reviews { get; set; }
     public DbSet<ReviewReply> ReviewReplies { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Template> Templates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

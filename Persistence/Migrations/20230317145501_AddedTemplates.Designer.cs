@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    [Migration("20230316103802_Added-purchases-table")]
-    partial class Addedpurchasestable
+    [Migration("20230317145501_AddedTemplates")]
+    partial class AddedTemplates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,7 +115,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Domain.Product", b =>
@@ -141,6 +141,9 @@ namespace Persistence.Migrations
 
                     b.Property<string>("UnitOfMeasurement")
                         .HasColumnType("text");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric");
 
                     b.HasKey("ProductId");
 
@@ -209,9 +212,6 @@ namespace Persistence.Migrations
                     b.Property<Guid>("MerchantId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("StoreCategory")
-                        .HasColumnType("text");
-
                     b.Property<string>("StoreName")
                         .HasColumnType("text");
 
@@ -220,6 +220,46 @@ namespace Persistence.Migrations
                     b.HasIndex("MerchantId");
 
                     b.ToTable("Stores");
+                });
+
+            modelBuilder.Entity("Domain.Template", b =>
+                {
+                    b.Property<Guid>("TemplateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BgImg")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Ftext")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SMedia")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("heroSub")
+                        .HasColumnType("text");
+
+                    b.Property<string>("herotext")
+                        .HasColumnType("text");
+
+                    b.Property<string>("logo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("main")
+                        .HasColumnType("text");
+
+                    b.Property<string>("sub")
+                        .HasColumnType("text");
+
+                    b.HasKey("TemplateId");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("Domain.Customer", b =>
@@ -331,6 +371,17 @@ namespace Persistence.Migrations
                     b.Navigation("Merchant");
                 });
 
+            modelBuilder.Entity("Domain.Template", b =>
+                {
+                    b.HasOne("Domain.Store", "Store")
+                        .WithMany("Template")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("Domain.CustomerReview", b =>
                 {
                     b.Navigation("ReviewReply");
@@ -358,6 +409,8 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Store", b =>
                 {
                     b.Navigation("Inventory");
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("Domain.Customer", b =>
