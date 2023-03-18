@@ -14,6 +14,12 @@ public class AppDataContext: DbContext
     public DbSet<Store> Stores { get; set; }
     public DbSet<CustomerReview> Reviews { get; set; }
     public DbSet<ReviewReply> ReviewReplies { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Template> Templates { get; set; }
+    public DbSet<TemplateDefault> TemplateDefaults { get; set; }
+    public DbSet<ShipingDetails> ShipingDetails { get; set; }
+    public DbSet<CreditCardDetail> CreditCardDetails { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,6 +87,21 @@ public class AppDataContext: DbContext
                 .HasForeignKey( rr => rr.MerchantId);
             }
         );
+
+        modelBuilder.Entity<ShipingDetails>(entity =>
+        {
+            entity.HasKey(s => new { s.StoreId, s.CustomerId });
+        });
+
+        modelBuilder.Entity<CreditCardDetail>(entity =>
+        {
+            entity.HasKey(s => new { s.StoreId, s.CustomerId });
+        });
+
+        modelBuilder.Entity<TemplateDefault>(entity =>
+        {
+            entity.HasKey(s => s.TemplateDefaultId);
+        });
 
     }
 

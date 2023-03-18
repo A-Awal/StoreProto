@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Addedpurchasestable : Migration
+    public partial class AddedCardDetails : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
+                name: "Orders",
                 columns: table => new
                 {
                     OrderId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -43,9 +43,9 @@ namespace Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Order", x => x.OrderId);
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
                     table.ForeignKey(
-                        name: "FK_Order_Users_CustomerId",
+                        name: "FK_Orders_Users_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -58,7 +58,6 @@ namespace Persistence.Migrations
                 {
                     StoreId = table.Column<Guid>(type: "uuid", nullable: false),
                     MerchantId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StoreCategory = table.Column<string>(type: "text", nullable: true),
                     StoreName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -67,6 +66,35 @@ namespace Persistence.Migrations
                     table.ForeignKey(
                         name: "FK_Stores_Users_MerchantId",
                         column: x => x.MerchantId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CreditCardDetails",
+                columns: table => new
+                {
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StoreId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Number = table.Column<string>(type: "text", nullable: true),
+                    ExpiryYear = table.Column<string>(type: "text", nullable: true),
+                    ExpiryMonth = table.Column<string>(type: "text", nullable: true),
+                    Cvc = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreditCardDetails", x => new { x.StoreId, x.CustomerId });
+                    table.ForeignKey(
+                        name: "FK_CreditCardDetails_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreditCardDetails_Users_CustomerId",
+                        column: x => x.CustomerId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -82,6 +110,7 @@ namespace Persistence.Migrations
                     ProductCategory = table.Column<string>(type: "text", nullable: true),
                     UnitOfMeasurement = table.Column<string>(type: "text", nullable: true),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "numeric", nullable: false),
                     StoreId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -89,6 +118,57 @@ namespace Persistence.Migrations
                     table.PrimaryKey("PK_Products", x => x.ProductId);
                     table.ForeignKey(
                         name: "FK_Products_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShipingDetails",
+                columns: table => new
+                {
+                    StoreId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShipingDetails", x => new { x.StoreId, x.CustomerId });
+                    table.ForeignKey(
+                        name: "FK_ShipingDetails_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ShipingDetails_Users_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Templates",
+                columns: table => new
+                {
+                    TemplateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StoreId = table.Column<Guid>(type: "uuid", nullable: false),
+                    main = table.Column<string>(type: "text", nullable: true),
+                    sub = table.Column<string>(type: "text", nullable: true),
+                    BgImg = table.Column<string>(type: "text", nullable: true),
+                    logo = table.Column<string>(type: "text", nullable: true),
+                    herotext = table.Column<string>(type: "text", nullable: true),
+                    heroSub = table.Column<string>(type: "text", nullable: true),
+                    Ftext = table.Column<string>(type: "text", nullable: true),
+                    SMedia = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Templates", x => x.TemplateId);
+                    table.ForeignKey(
+                        name: "FK_Templates_Stores_StoreId",
                         column: x => x.StoreId,
                         principalTable: "Stores",
                         principalColumn: "StoreId",
@@ -110,15 +190,15 @@ namespace Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Purchases", x => new { x.CustomerId, x.DatePurchased });
                     table.ForeignKey(
-                        name: "FK_Purchases_Order_CustomerId",
+                        name: "FK_Purchases_Orders_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "Order",
+                        principalTable: "Orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Purchases_Order_OrderId",
+                        name: "FK_Purchases_Orders_OrderId",
                         column: x => x.OrderId,
-                        principalTable: "Order",
+                        principalTable: "Orders",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -184,8 +264,13 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_CustomerId",
-                table: "Order",
+                name: "IX_CreditCardDetails_CustomerId",
+                table: "CreditCardDetails",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_CustomerId",
+                table: "Orders",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
@@ -220,14 +305,27 @@ namespace Persistence.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShipingDetails_CustomerId",
+                table: "ShipingDetails",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Stores_MerchantId",
                 table: "Stores",
                 column: "MerchantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Templates_StoreId",
+                table: "Templates",
+                column: "StoreId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CreditCardDetails");
+
             migrationBuilder.DropTable(
                 name: "Purchases");
 
@@ -235,7 +333,13 @@ namespace Persistence.Migrations
                 name: "ReviewReplies");
 
             migrationBuilder.DropTable(
-                name: "Order");
+                name: "ShipingDetails");
+
+            migrationBuilder.DropTable(
+                name: "Templates");
+
+            migrationBuilder.DropTable(
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Reviews");

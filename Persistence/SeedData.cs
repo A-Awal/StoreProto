@@ -109,37 +109,30 @@ namespace Persistence
                 new Store
                 {
                     MerchantId = mer[1].Id,
-                    StoreCategory = "Inventory",
-
                 },
                 new Store
                 {
                     MerchantId = mer[1].Id,
-                    StoreCategory = "someOther",
 
                 },
                 new Store
                 {
                     MerchantId = mer[4].Id,
-                    StoreCategory = "Please Suggest",
 
                 },
                 new Store
                 {
                     MerchantId = mer[4].Id,
-                    StoreCategory = "I don't Know",
 
                 },
                 new Store
                 {
                     MerchantId = mer[0].Id,
-                    StoreCategory = "Don't as me that again",
 
                 },
                 new Store
                 {
                     MerchantId = mer[2].Id,
-                    StoreCategory = "I Vex now",
 
                 },
 
