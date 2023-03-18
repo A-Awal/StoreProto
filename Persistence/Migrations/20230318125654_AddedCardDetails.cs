@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedTemplates : Migration
+    public partial class AddedCardDetails : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -72,6 +72,35 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CreditCardDetails",
+                columns: table => new
+                {
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StoreId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Number = table.Column<string>(type: "text", nullable: true),
+                    ExpiryYear = table.Column<string>(type: "text", nullable: true),
+                    ExpiryMonth = table.Column<string>(type: "text", nullable: true),
+                    Cvc = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CreditCardDetails", x => new { x.StoreId, x.CustomerId });
+                    table.ForeignKey(
+                        name: "FK_CreditCardDetails_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CreditCardDetails_Users_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -92,6 +121,31 @@ namespace Persistence.Migrations
                         column: x => x.StoreId,
                         principalTable: "Stores",
                         principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShipingDetails",
+                columns: table => new
+                {
+                    StoreId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShipingDetails", x => new { x.StoreId, x.CustomerId });
+                    table.ForeignKey(
+                        name: "FK_ShipingDetails_Stores_StoreId",
+                        column: x => x.StoreId,
+                        principalTable: "Stores",
+                        principalColumn: "StoreId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ShipingDetails_Users_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -210,6 +264,11 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CreditCardDetails_CustomerId",
+                table: "CreditCardDetails",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
                 table: "Orders",
                 column: "CustomerId");
@@ -246,6 +305,11 @@ namespace Persistence.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShipingDetails_CustomerId",
+                table: "ShipingDetails",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Stores_MerchantId",
                 table: "Stores",
                 column: "MerchantId");
@@ -260,10 +324,16 @@ namespace Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CreditCardDetails");
+
+            migrationBuilder.DropTable(
                 name: "Purchases");
 
             migrationBuilder.DropTable(
                 name: "ReviewReplies");
+
+            migrationBuilder.DropTable(
+                name: "ShipingDetails");
 
             migrationBuilder.DropTable(
                 name: "Templates");

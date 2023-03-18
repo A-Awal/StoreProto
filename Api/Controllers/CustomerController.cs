@@ -13,7 +13,9 @@ namespace Api.Controllers
         [HttpGet("Submit-a-Purchase")]
         public async Task<IActionResult> PuchaseAProduct(PurchaseDto purchase)
         {
-            Guid cartId = await Mediator.Send(new Application.Order.Create.Query{purchaseDto = purchase});
+            var result = await Mediator.Send(new Application.Order.Create.Command { purchaseDto = purchase });
+
+            Guid cartId = result.Value;
 
             return HandleResult(await Mediator.Send(new Application.Purchase.Create.Command { cartId = cartId, purchaseDto = purchase }));
             
@@ -23,7 +25,7 @@ namespace Api.Controllers
         public async Task<IActionResult> Cart(string customerId)
         {
             var id = Guid.Parse(customerId);
-            return HandleResult(await Mediator.Send( new Purchases.Query{Params={ CustomerId = id, Cart = true }} ));
+            return HandleResult(await Mediator.Send( new Application.Order.Cart.Query { CustomerId= id} ));
         }
 
         [HttpPost("SubmitStripeDetails")]
@@ -32,13 +34,18 @@ namespace Api.Controllers
             return Ok(await Mediator.Send(new CreateCustomer.Query{param = para }));
         }
 
+        [HttpGet("getCardCard")]
+        public async Task<IActionResult> GetCardDetails(CreateCustomerParam para)
+        {
+            return HandleResult(await Mediator.Send(new GetCardDetails.Query{ param = para}));
+        }
+
         [HttpPost("Pay")]
         public async Task<IActionResult> Pay(CreateChargeParam para)
         {
             return Ok(await Mediator.Send(new ChargeCustomer.Query(){param = para }));
         }
 
-        
 
     }
 }

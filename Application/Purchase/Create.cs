@@ -43,7 +43,7 @@ namespace Application.Purchase
                 {
                     
                     var orderToUpdate = _context.Orders.Find(request.cartId);
-                    orderToUpdate.TotalAmount = productToOrder.UnitPrice * request.purchaseDto.QuantityPurchase;
+                    orderToUpdate.TotalAmount = orderToUpdate.TotalAmount + productToOrder.UnitPrice * request.purchaseDto.QuantityPurchase;
                     _context.Orders.Update(orderToUpdate);
 
                     var newpurchase = _mapper.Map<Domain.Purchase>(request.purchaseDto);

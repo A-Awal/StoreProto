@@ -4,14 +4,14 @@
     {
         public Guid TemplateId { get; set; }
         public Guid StoreId { get; set; }
-        public string main { get; set; }
-        public string sub { get; set; }
-        public string BgImg { get; set; }
-        public string logo { get; set; }
-        public string herotext { get; set; }
-        public string heroSub { get; set; }
-        public string Ftext { get; set; }
-        public string SMedia { get; set; }
+        public string MainHearderTextSize { get; set; }
+        public string SubHearderTextsize { get; set; }
+        public string HeroImage { get; set; }
+        public string Logo { get; set; }
+        public string HeroMainHearderText { get; set; }
+        public string HeroMainSubHearderText { get; set; }
+        public string FooterTextHearder { get; set; }
+        public string SocialMedia { get; set; }
 
         public Store Store { get; set; }
     }

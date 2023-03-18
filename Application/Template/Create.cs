@@ -8,9 +8,9 @@ namespace Application.Template
 {
     public class Create
     {
-        public class Command : IRequest<Result<TemplateDto>>
+        public class Command: IRequest<Result<TemplateDto>>
         {
-            public StoreDto storeDto { get; set; }
+            public TemplateDto TemplateDto { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<TemplateDto>>
@@ -26,22 +26,26 @@ namespace Application.Template
 
             public async Task<Result<TemplateDto>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var store = _context.Templates.Find(request.storeDto.StoreId);
+                var store = _context.Stores.Find(request.TemplateDto.StoreId);
 
                 if (store == null) return Result<TemplateDto>.Failure("store does not exist");
 
-                Domain.Template newTem = new Domain.Template
+                try
                 {
-                    StoreId = request.storeDto.StoreId
-                };
+                    Domain.Template newTem = _mapper.Map<Domain.Template>(request.TemplateDto);
+                    
+                    _context.Templates.Add(newTem);
+                    await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Templates.Add(newTem);
-                await _context.SaveChangesAsync();
+                    var newstore = _mapper.Map<TemplateDto>(newTem);
 
-                var newstore = _mapper.Map<TemplateDto>(newTem);
-
-                return Result<TemplateDto>.Success(newstore);
-
+                    return Result<TemplateDto>.Success(newstore);
+                }
+                catch(Exception ex)
+                {
+                    return Result<TemplateDto>.Failure(ex.Message);
+                }
+                
             }
         }
     }

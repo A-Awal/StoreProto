@@ -6,7 +6,7 @@ namespace Domain
         public Guid CustomerId { get; set; }
         public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
         public DateTime DateOrdered { get; set; } = DateTime.UtcNow;
-        public Decimal TotalAmount { get; set; }
+        public decimal TotalAmount { get; set; }
         public Customer Customer { get; set; }
         public OrderStates OrderState { get; set; }
 

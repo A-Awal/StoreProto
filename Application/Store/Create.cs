@@ -10,7 +10,7 @@ namespace Application.Store
     {
         public class Command: IRequest<Result<StoreDto>>
         {
-            public TemplateParam templateParam { get; set; }
+            public CreateStoreParam CreateStoreParam { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<StoreDto>>
@@ -26,27 +26,26 @@ namespace Application.Store
 
             public async Task<Result<StoreDto>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var store = _context.Templates.Find(request.templateParam.StoreId);
-
-                if (store != null)
+                
+                try
                 {
-                    var existingStore = _mapper.Map<StoreDto>(store);
+                    Domain.Store newTem = new()
+                    {
+                        MerchantId = request.CreateStoreParam.MerchantId,
+                        StoreName = request.CreateStoreParam.storeName
+                    };
 
-                    return Result<StoreDto>.Success(existingStore);
+                    _context.Stores.Add(newTem);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    var newstore = _mapper.Map<StoreDto>(newTem);
+
+                    return Result<StoreDto>.Success(newstore);
+
+                } catch(Exception ex)
+                {
+                    return Result<StoreDto>.Failure(ex.Message);
                 }
-
-                Domain.Store newTem = new Domain.Store
-                {
-                    StoreId = request.templateParam.StoreId,
-                    MerchantId = request.templateParam.MerchantId
-                };
-
-                _context.Stores.Add(newTem);
-                await _context.SaveChangesAsync();
-
-                var newstore = _mapper.Map<StoreDto>(newTem);
-
-                return Result<StoreDto>.Success(newstore);
 
             }
         }

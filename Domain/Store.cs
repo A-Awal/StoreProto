@@ -8,6 +8,7 @@ namespace Domain
 		public ICollection<Template> Template { get; set; } = new List<Template>();
         public string StoreName { get; set; }
 		public ICollection<Product> Inventory { get; set; }
+		public ICollection<ShipingDetails> shipingDetails { get; set; }
 	}
 
 }

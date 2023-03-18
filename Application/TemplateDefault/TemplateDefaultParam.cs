@@ -1,8 +1,14 @@
-﻿namespace Application.Template
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.TemplateDefault
 {
-    public class TemplateDto
+    public class TemplateDefaultParam
     {
-        public Guid StoreId { get; set; }
+        public string TemplateCategory { get; set; }
         public string MainHearderTextSize { get; set; }
         public string SubHearderTextsize { get; set; }
         public string HeroImage { get; set; }
