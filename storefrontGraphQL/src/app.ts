@@ -4,6 +4,10 @@ import {ApolloServer} from "apollo-server-express";
 import {buildSchema} from 'type-graphql';
 import { initializeDatabase } from "./config/db";
 const  ProductAPI = require('./DataSources/dataSources');
+import {
+    ApolloServerPluginLandingPageGraphQLPlayground,
+    ApolloServerPluginLandingPageDisabled
+} from 'apollo-server-core';
 
 import "./config/passport.config";
 
@@ -18,7 +22,10 @@ async function main()
   context: ({req, res}: any) => ({req, res}),
   dataSources: () => ({
       productAPI: new ProductAPI(),
-  }),
+      }),
+      plugins: [
+               ApolloServerPluginLandingPageGraphQLPlayground(),
+                ],
 
   });
 

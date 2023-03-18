@@ -1,9 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\storefrontGraphQL",
-    "\\storefrontGraphQL\\src"
+    "\\Application"
   ],
-  "SelectedNode": "\\storefrontGraphQL\\src\\app.ts",
+  "SelectedNode": "\\Application\\obj",
   "PreviewInSolutionExplorer": false
 }
