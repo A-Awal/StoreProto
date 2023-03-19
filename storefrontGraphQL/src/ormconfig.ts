@@ -13,7 +13,7 @@ const config: DataSourceOptions = {
   username: 'A-Awal',
   password: "G3LrmV0yWMio",
   database: 'neondb',
-  entities: [User, Store, Product, Order, Token],
+  entities: [],
   migrations: [__dirname + "/migrations/*{.ts,.js}"],
   synchronize: false,
   ssl: true,

@@ -22,7 +22,7 @@ enum Category {
 export class Product extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
-  ProductId: number;
+  id: number;
 
   @Field()
   @Column()
