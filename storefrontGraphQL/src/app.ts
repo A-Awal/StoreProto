@@ -23,9 +23,7 @@ async function main()
   dataSources: () => ({
       productAPI: new ProductAPI(),
       }),
-      plugins: [
-               ApolloServerPluginLandingPageGraphQLPlayground(),
-                ],
+      introspection: true,
 
   });
 

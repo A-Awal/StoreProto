@@ -15,7 +15,7 @@ const config: DataSourceOptions = {
   database: 'neondb',
   entities: [User, Store, Product, Order, Token],
   migrations: [__dirname + "/migrations/*{.ts,.js}"],
-  synchronize: true,
+  synchronize: false,
   ssl: true,
   migrationsRun: false,
   logging: true,
