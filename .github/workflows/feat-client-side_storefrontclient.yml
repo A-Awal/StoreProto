@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'storeFrontClient'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_106B63ED61B14CD4ADD850D8C2EA1464 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EB0B933626F247098B4D8C4BF6784DF1 }}
           package: .
