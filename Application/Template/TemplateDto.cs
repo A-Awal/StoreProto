@@ -2,7 +2,8 @@
 {
     public class TemplateDto
     {
-        public Guid StoreId { get; set; }
+        public Guid TemplateId { get; set; }
+        public string TemplateCategory { get; set; }
         public string MainHearderTextSize { get; set; }
         public string SubHearderTextsize { get; set; }
         public string HeroImage { get; set; }

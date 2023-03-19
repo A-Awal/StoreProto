@@ -1,5 +1,5 @@
 ﻿using Api.Controllers;
-using Application.TemplateDefault;
+using Application.Page;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -7,15 +7,15 @@ namespace API.Controllers
     public class PageController : BaseApiController
     {
         [HttpGet]
-        public async Task<IActionResult> GetTemplate([FromBody]GetTemplateParam param)
+        public async Task<IActionResult> GetPage([FromBody]GetPageParam getPageParam)
         {
-            return HandleResult(await Mediator.Send(new Application.Template.GetTemplates.Query{ Param = param }));
+            return HandleResult(await Mediator.Send(new Application.Page.GetPages.Query{GetPageParam = getPageParam}));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTemplate(Application.Template.TemplateDto templateDto)
+        public async Task<IActionResult> CreatePage(PageDto pageDto)
         {
-            return HandleResult(await Mediator.Send(new Application.Template.Create.Command { TemplateDto = templateDto}));
+            return HandleResult(await Mediator.Send(new Application.Page.Create.Command{PageDto = pageDto}));
         }
     }
 }

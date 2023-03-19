@@ -1,9 +1,6 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
 namespace Domain
 {
-	public abstract class User{
+    public abstract class User{
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Email { get; set; }

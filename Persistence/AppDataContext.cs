@@ -15,8 +15,8 @@ public class AppDataContext: DbContext
     public DbSet<CustomerReview> Reviews { get; set; }
     public DbSet<ReviewReply> ReviewReplies { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<Page> Pages { get; set; }
     public DbSet<Template> Templates { get; set; }
-    public DbSet<TemplateDefault> TemplateDefaults { get; set; }
     public DbSet<ShipingDetails> ShipingDetails { get; set; }
     public DbSet<CreditCardDetail> CreditCardDetails { get; set; }
 
@@ -98,9 +98,9 @@ public class AppDataContext: DbContext
             entity.HasKey(s => new { s.StoreId, s.CustomerId });
         });
 
-        modelBuilder.Entity<TemplateDefault>(entity =>
+        modelBuilder.Entity<Template>(entity =>
         {
-            entity.HasKey(s => s.TemplateDefaultId);
+            entity.HasKey(s => s.TemplateId);
         });
 
     }

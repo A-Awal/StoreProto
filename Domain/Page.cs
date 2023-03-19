@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.TemplateDefault
+﻿namespace Domain
 {
-    public class TemplateDefaultParam
+    public class Page
     {
-        public string TemplateCategory { get; set; }
+        public Guid PageId { get; set; }
+        public Guid StoreId { get; set; }
         public string MainHearderTextSize { get; set; }
         public string SubHearderTextsize { get; set; }
         public string HeroImage { get; set; }
@@ -17,5 +12,7 @@ namespace Application.TemplateDefault
         public string HeroMainSubHearderText { get; set; }
         public string FooterTextHearder { get; set; }
         public string SocialMedia { get; set; }
+
+        public Store Store { get; set; }
     }
 }

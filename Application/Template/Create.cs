@@ -1,5 +1,5 @@
 ﻿using Application.Core;
-using Application.Store;
+using Application.Page;
 using AutoMapper;
 using MediatR;
 using Persistence;
@@ -8,12 +8,12 @@ namespace Application.Template
 {
     public class Create
     {
-        public class Command: IRequest<Result<TemplateDto>>
+        public class Command : IRequest<Result<Unit>>
         {
-            public TemplateDto TemplateDto { get; set; }
+            public TemplateCreateParam TemplateCreateParam { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<TemplateDto>>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,29 +24,25 @@ namespace Application.Template
                 _mapper = mapper;
             }
 
-            public async Task<Result<TemplateDto>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var store = _context.Stores.Find(request.TemplateDto.StoreId);
-
-                if (store == null) return Result<TemplateDto>.Failure("store does not exist");
-
                 try
                 {
-                    Domain.Template newTem = _mapper.Map<Domain.Template>(request.TemplateDto);
-                    
+                    Domain.Template newTem = _mapper.Map<Domain.Template>(request.TemplateCreateParam);
+
                     _context.Templates.Add(newTem);
+
                     await _context.SaveChangesAsync(cancellationToken);
 
-                    var newstore = _mapper.Map<TemplateDto>(newTem);
+                    return Result<Unit>.Success(new Unit());
 
-                    return Result<TemplateDto>.Success(newstore);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    return Result<TemplateDto>.Failure(ex.Message);
+                    return Result<Unit>.Failure(ex.Message);
                 }
-                
             }
         }
     }
 }
+

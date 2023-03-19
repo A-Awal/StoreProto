@@ -1,8 +1,7 @@
-﻿namespace Domain
+﻿namespace Application.Template
 {
-    public class TemplateDefault
+    public class TemplateCreateParam
     {
-        public Guid TemplateDefaultId { get; set; }
         public string TemplateCategory { get; set; }
         public string MainHearderTextSize { get; set; }
         public string SubHearderTextsize { get; set; }
@@ -12,6 +11,5 @@
         public string HeroMainSubHearderText { get; set; }
         public string FooterTextHearder { get; set; }
         public string SocialMedia { get; set; }
-
     }
 }

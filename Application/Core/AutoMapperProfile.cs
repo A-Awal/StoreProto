@@ -1,11 +1,11 @@
 ﻿using Application.Order;
+using Application.Page;
 using Application.Product;
 using Application.Purchase;
 using Application.Shiping;
 using Application.Store;
 using Application.Stripe.Resources;
 using Application.Template;
-using Application.TemplateDefault;
 using AutoMapper;
 
 namespace Application.Core
@@ -33,11 +33,11 @@ namespace Application.Core
 
             CreateMap<Domain.CreditCardDetail, CustomerResource>();
 
-            CreateMap<Domain.TemplateDefault, TemplateDefaultDto>();
-            CreateMap<TemplateDefaultParam, Domain.TemplateDefault>();
-
             CreateMap<Domain.Template, TemplateDto>();
-            CreateMap<TemplateDto, Domain.Template>();
+            CreateMap<TemplateCreateParam, Domain.Template>();
+
+            CreateMap<Domain.Page, PageDto>();
+            CreateMap<PageDto, Domain.Page>();
         }
 
     }
