@@ -22,8 +22,13 @@ async function main()
   context: ({req, res}: any) => ({req, res}),
   dataSources: () => ({
       productAPI: new ProductAPI(),
-      }),
-      introspection: true,
+  }),
+  introspection: true,
+  plugins: [
+    false
+      ? ApolloServerPluginLandingPageDisabled()
+      : ApolloServerPluginLandingPageGraphQLPlayground(),
+  ],
 
   });
 
