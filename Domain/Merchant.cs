@@ -1,6 +1,7 @@
 namespace Domain
 {
-    public abstract class User{
+    public class User{
+		public Guid Id { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string Email { get; set; }
@@ -12,7 +13,6 @@ namespace Domain
 
     public class Merchant: User
 	{
-        public Guid Id { get; set; }
         public ICollection<Store> Stores { get; set; }
 		public ICollection<ReviewReply> ReviewReplies { get; set; } = new List<ReviewReply>();
     }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence;
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    partial class AppDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230319214255_Adding-Photos")]
+    partial class AddingPhotos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,6 +83,44 @@ namespace Persistence.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Domain.Merchant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users", (string)null);
+
+                    b.HasDiscriminator<string>("UserType").HasValue("Merchant");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Domain.Order", b =>
@@ -328,44 +369,17 @@ namespace Persistence.Migrations
                     b.ToTable("Templates");
                 });
 
-            modelBuilder.Entity("Domain.User", b =>
+            modelBuilder.Entity("Domain.Customer", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.HasBaseType("Domain.Merchant");
+
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
+                    b.Property<string>("Username")
                         .HasColumnType("text");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserType")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
-
-                    b.UseTphMappingStrategy();
+                    b.HasDiscriminator().HasValue("Customer");
                 });
 
             modelBuilder.Entity("Domain.PagePhoto", b =>
@@ -402,26 +416,6 @@ namespace Persistence.Migrations
                     b.HasIndex("TemplateId");
 
                     b.HasDiscriminator().HasValue("TemplatePhoto");
-                });
-
-            modelBuilder.Entity("Domain.Customer", b =>
-                {
-                    b.HasBaseType("Domain.User");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("Customer");
-                });
-
-            modelBuilder.Entity("Domain.Merchant", b =>
-                {
-                    b.HasBaseType("Domain.User");
-
-                    b.HasDiscriminator().HasValue("Merchant");
                 });
 
             modelBuilder.Entity("Domain.CreditCardDetail", b =>
@@ -607,6 +601,13 @@ namespace Persistence.Migrations
                     b.Navigation("ReviewReply");
                 });
 
+            modelBuilder.Entity("Domain.Merchant", b =>
+                {
+                    b.Navigation("ReviewReplies");
+
+                    b.Navigation("Stores");
+                });
+
             modelBuilder.Entity("Domain.Order", b =>
                 {
                     b.Navigation("Purchases");
@@ -647,13 +648,6 @@ namespace Persistence.Migrations
                     b.Navigation("ProductReviews");
 
                     b.Navigation("ShipingDetails");
-                });
-
-            modelBuilder.Entity("Domain.Merchant", b =>
-                {
-                    b.Navigation("ReviewReplies");
-
-                    b.Navigation("Stores");
                 });
 #pragma warning restore 612, 618
         }

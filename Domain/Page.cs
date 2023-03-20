@@ -12,7 +12,8 @@
         public string HeroMainSubHearderText { get; set; }
         public string FooterTextHearder { get; set; }
         public string SocialMedia { get; set; }
-
         public Store Store { get; set; }
+        public ICollection<PagePhoto> PagePhotos { get; set; }
+
     }
 }

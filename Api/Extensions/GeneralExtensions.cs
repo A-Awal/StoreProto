@@ -7,6 +7,7 @@ using Stripe;
 using Api.Services;
 using Api.Models;
 using Application.Services;
+using Infrastructure.Photos;
 
 namespace API.Extensions
 {
@@ -30,6 +31,8 @@ namespace API.Extensions
 
             services.Configure<SmtpSettings>(config.GetSection("SmtpSettings"));
             services.AddSingleton<IEmailSender, EmailSenderService>();
+            services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
 
             return services;
         }

@@ -1,6 +1,6 @@
 namespace Domain
 {
-    public class Customer: Merchant
+    public class Customer: User
 	{
 		public string Username { get; set; }
 		public Guid OrderId {get; set; }
