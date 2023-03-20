@@ -8,12 +8,12 @@ namespace Application.Template
 {
     public class GetATemplate
     {
-        public class Query: IRequest<Result<TemplateCreateParam>>
+        public class Query: IRequest<Result<TemplateDto>>
         {
             public string Category { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<TemplateCreateParam>>
+        public class Handler : IRequestHandler<Query, Result<TemplateDto>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,16 +24,16 @@ namespace Application.Template
                 _mapper = mapper;
             }
 
-            public async Task<Result<TemplateCreateParam>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<TemplateDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var defaultTemplate = await _context.Templates.FirstOrDefaultAsync(t => t.TemplateCategory.Contains(request.Category));
+                var defaultTemplate = await _context.Templates.Include(t => t.TemplatePhotos).FirstOrDefaultAsync(t => t.TemplateCategory.Contains(request.Category));
                 if (defaultTemplate == null)
                 {
-                    return Result<TemplateCreateParam>.Failure("This category does not exist");
+                    return Result<TemplateDto>.Failure("This category does not exist");
                 }
 
-                var toReturn = _mapper.Map<TemplateCreateParam>(defaultTemplate);
-                return Result<TemplateCreateParam>.Success(toReturn);
+                var toReturn = _mapper.Map<TemplateDto>(defaultTemplate);
+                return Result<TemplateDto>.Success(toReturn);
             }
         }
     }

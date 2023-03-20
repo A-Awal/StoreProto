@@ -20,10 +20,10 @@ namespace API.Controllers
             return HandleResult(await _mediator.Send(new Products.Query { SearchTerm = searchTerm }));
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateProduct(ProductDto product)
+        [HttpPost("Create")]
+        public async Task<IActionResult> CreateProduct(ProductCreateParam product)
         {
-            return Ok(await _mediator.Send(new Create.Command { ProductDto = product }));
+            return Ok(await _mediator.Send(new Create.Command { ProductCreateParam = product }));
         }
     }
 }

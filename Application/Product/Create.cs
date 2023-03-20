@@ -1,15 +1,7 @@
 ﻿using AutoMapper;
-using Domain;
 using FluentValidation;
 using MediatR;
 using Persistence;
-using SQLitePCL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Product
 {
@@ -17,16 +9,14 @@ namespace Application.Product
     {
         public class Command : IRequest<string>
         {
-            private ProductDto productDto;
-
-            public ProductDto ProductDto { get; set; }
+            public ProductCreateParam ProductCreateParam { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(x => x.ProductDto).SetValidator(new ProductValidator());
+                RuleFor(x => x.ProductCreateParam).SetValidator(new ProductValidator());
             }
         }
 
@@ -43,7 +33,7 @@ namespace Application.Product
 
             public async Task<string> Handle(Command request, CancellationToken cancellationToken)
             {
-                var product = _mapper.Map<Domain.Product>(request.ProductDto);
+                var product = _mapper.Map<Domain.Product>(request.ProductCreateParam);
 
                 _context.Products.Add(product);
 
