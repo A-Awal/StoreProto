@@ -1,16 +1,16 @@
 ﻿using Application.Core;
-using Application.TemplateDefault;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Template
 {
-    public class GetTemplates
+    public class GetATemplate
     {
-        public class Query : IRequest<Result<TemplateDto>>
+        public class Query: IRequest<Result<TemplateDto>>
         {
-            public GetTemplateParam Param { get; set; }
+            public string Category { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<TemplateDto>>
@@ -26,21 +26,13 @@ namespace Application.Template
 
             public async Task<Result<TemplateDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var defaultTemplate = _context.Templates
-                    .Where(t => t.StoreId == request.Param.StoreId)
-                    .AsQueryable();
-                if(request.Param.TemplateId != Guid.Empty)
-                {
-                    defaultTemplate = defaultTemplate.Where( d => d.TemplateId == request.Param.TemplateId);
-                }
-
+                var defaultTemplate = await _context.Templates.Include(t => t.TemplatePhotos).FirstOrDefaultAsync(t => t.TemplateCategory.Contains(request.Category));
                 if (defaultTemplate == null)
                 {
                     return Result<TemplateDto>.Failure("This category does not exist");
                 }
 
                 var toReturn = _mapper.Map<TemplateDto>(defaultTemplate);
-
                 return Result<TemplateDto>.Success(toReturn);
             }
         }

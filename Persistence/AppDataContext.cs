@@ -7,6 +7,7 @@ public class AppDataContext: DbContext
     public AppDataContext(DbContextOptions<AppDataContext> options): base(options)
     { }
 
+    public  DbSet<User> Users { get; set; }
     public  DbSet<Merchant> Merchants { get; set; }
     public  DbSet<Customer> Customers { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
@@ -15,22 +16,20 @@ public class AppDataContext: DbContext
     public DbSet<CustomerReview> Reviews { get; set; }
     public DbSet<ReviewReply> ReviewReplies { get; set; }
     public DbSet<Order> Orders { get; set; }
+    public DbSet<Page> Pages { get; set; }
     public DbSet<Template> Templates { get; set; }
-    public DbSet<TemplateDefault> TemplateDefaults { get; set; }
     public DbSet<ShipingDetails> ShipingDetails { get; set; }
     public DbSet<CreditCardDetail> CreditCardDetails { get; set; }
+    public DbSet<Photo> Photos { get; set; }
+    public DbSet<ProductPhoto> ProductPhotos { get; set; }
+    public DbSet<PagePhoto> PagePhotos { get; set; }
+    public DbSet<TemplatePhoto> TemplatePhotos { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Merchant>( m => {
-            m.ToTable("Users");
-            m.Property( m => m.Id)
-            .HasColumnName("UserId");
-            m.HasKey(m => m.Id);
-            m.HasDiscriminator(m => m.UserType);
-        });
+        
         modelBuilder.Entity<Customer>();
         modelBuilder.Entity<Product>().HasKey(p => p.ProductId);
         modelBuilder.Entity<Store>( s => 
@@ -98,9 +97,9 @@ public class AppDataContext: DbContext
             entity.HasKey(s => new { s.StoreId, s.CustomerId });
         });
 
-        modelBuilder.Entity<TemplateDefault>(entity =>
+        modelBuilder.Entity<Template>(entity =>
         {
-            entity.HasKey(s => s.TemplateDefaultId);
+            entity.HasKey(s => s.TemplateId);
         });
 
     }

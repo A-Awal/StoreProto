@@ -30,6 +30,8 @@ namespace Application.Product
             {
                  var query =  _dataContext.Products
                     .OrderBy( p => p.ProductName)
+                    .Include(p => p.Store)
+                    .Include(p => p.Purchases)
                     .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
                     .AsQueryable();
                 
