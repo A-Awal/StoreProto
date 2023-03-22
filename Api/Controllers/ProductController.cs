@@ -15,15 +15,21 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProduct(string searchTerm)
+        public async Task<IActionResult> GetProduct(string productName)
         {
-            return HandleResult(await _mediator.Send(new Products.Query { SearchTerm = searchTerm }));
+            return HandleResult(await _mediator.Send(new Products.Query { ProductName = productName }));
         }
 
         [HttpPost("Create")]
         public async Task<IActionResult> CreateProduct(ProductCreateParam product)
         {
-            return Ok(await _mediator.Send(new Create.Command { ProductCreateParam = product }));
+            return HandleResult(await _mediator.Send(new Create.Command { ProductCreateParam = product }));
+        }
+
+        [HttpGet("Quantity")]
+        public async Task<IActionResult> Available(Guid productId)
+        {
+            return HandleResult(await _mediator.Send(new Availability.Query { ProductId = productId }));
         }
     }
 }

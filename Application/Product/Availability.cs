@@ -1,21 +1,17 @@
-﻿using MediatR;
+﻿using Application.Core;
+using MediatR;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Product
 {
     public class Availability
     {
-        public class Query:IRequest<int>
+        public class Query:IRequest<Result<int>>
         {
-            public Guid productId { get; set; }
+            public Guid ProductId { get; set; }
         }
 
-        public class Hanler : IRequestHandler<Query, int>
+        public class Hanler : IRequestHandler<Query, Result<int>>
         {
             private readonly AppDataContext _context;
 
@@ -24,12 +20,12 @@ namespace Application.Product
                 _context = context;
             }
 
-            public async Task<int> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<int>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var product = await _context.Products.FindAsync(request.productId);
+                var product = await _context.Products.FindAsync(request.ProductId);
                 var quatity = product.Quantity;
 
-                return quatity >= 0 ? quatity : 0;
+                return quatity >= 0 ? Result<int>.Success(quatity) : Result<int>.Success(0);
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Application.Product
     {
         public class Query:IRequest<Result<List<ProductDto>>>
         {
-            public string SearchTerm { get; set; }
+            public string ProductName { get; set; }
 
         }
 
@@ -35,9 +35,9 @@ namespace Application.Product
                     .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
                     .AsQueryable();
                 
-                if(!String.IsNullOrEmpty(request.SearchTerm))
+                if(!String.IsNullOrEmpty(request.ProductName))
                 {
-                    query = query.Where(p => p.ProductName.Contains(request.SearchTerm));
+                    query = query.Where(p => p.ProductName.Contains(request.ProductName));
                 }
                 var products = await query.ToListAsync();
                 return Result<List<ProductDto>>.Success(products);

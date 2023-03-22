@@ -25,20 +25,20 @@ namespace Application.Page
 
             public async Task<Result<PageDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var defaultTemplate = _context.Pages
+                var page = _context.Pages
                     .Where(t => t.StoreId == request.GetPageParam.StoreId)
                     .AsQueryable();
                 if(request.GetPageParam.PageId != Guid.Empty)
                 {
-                    defaultTemplate = defaultTemplate.Where( d => d.PageId == request.GetPageParam.PageId);
+                    page = page.Where( d => d.PageId == request.GetPageParam.PageId);
                 }
 
-                if (defaultTemplate == null)
+                if (page == null)
                 {
                     return Result<PageDto>.Failure("This category does not exist");
                 }
 
-                var toReturn = _mapper.Map<PageDto>(defaultTemplate);
+                var toReturn = _mapper.Map<PageDto>(page);
 
                 return Result<PageDto>.Success(toReturn);
             }

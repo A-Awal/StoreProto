@@ -19,8 +19,7 @@ namespace Application.Core
             CreateMap<Domain.Product, ProductCreateParam>();
             CreateMap<ProductCreateParam, Domain.Product>();
             CreateMap<Domain.Product, ProductDto>()
-            .ForMember(d => d.Store, opt => opt.MapFrom(p => p.Store.StoreName))
-            .ForMember(d => d.Purchases, opt => opt.MapFrom(p => p.Purchases.Any()? p.Purchases: null));
+            .ForMember(d => d.Store, opt => opt.MapFrom(p => p.Store.StoreName));
 
             CreateMap<Domain.Purchase, PurchaseDto>();
             CreateMap<PurchaseDto, Domain.Purchase>();

@@ -26,13 +26,13 @@ namespace Application.Template
 
             public async Task<Result<TemplateDto>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var defaultTemplate = await _context.Templates.Include(t => t.TemplatePhotos).FirstOrDefaultAsync(t => t.TemplateCategory.Contains(request.Category));
-                if (defaultTemplate == null)
+                var template = await _context.Templates.Include(t => t.TemplatePhotos).FirstOrDefaultAsync(t => t.TemplateCategory.Contains(request.Category));
+                if (template == null)
                 {
                     return Result<TemplateDto>.Failure("This category does not exist");
                 }
 
-                var toReturn = _mapper.Map<TemplateDto>(defaultTemplate);
+                var toReturn = _mapper.Map<TemplateDto>(template);
                 return Result<TemplateDto>.Success(toReturn);
             }
         }

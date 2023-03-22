@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Application.Core;
+using AutoMapper;
 using FluentValidation;
 using MediatR;
 using Persistence;
@@ -7,7 +8,7 @@ namespace Application.Product
 {
     public class Create
     {
-        public class Command : IRequest<string>
+        public class Command : IRequest<Result<string>>
         {
             public ProductCreateParam ProductCreateParam { get; set; }
         }
@@ -20,7 +21,7 @@ namespace Application.Product
             }
         }
 
-        public class Handler : IRequestHandler<Command, string>
+        public class Handler : IRequestHandler<Command, Result<string>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -31,7 +32,7 @@ namespace Application.Product
                 _mapper = mapper;
             }
 
-            public async Task<string> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var product = _mapper.Map<Domain.Product>(request.ProductCreateParam);
 
@@ -39,8 +40,8 @@ namespace Application.Product
 
                 var success = await _context.SaveChangesAsync()>0;
 
-                if (success) return "Product is updated";
-                return "Please try Again";
+                if (success) return Result<string>.Success("Product is updated");
+                return Result<string>.Failure("Please try Again");
             }
         }
 
