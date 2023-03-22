@@ -31,14 +31,14 @@ namespace Application.Page
 
                 try
                 {
-                    Domain.Template newTem = _mapper.Map<Domain.Template>(request.PageDto);
+                    Domain.Page newTem = _mapper.Map<Domain.Page>(request.PageDto);
                     
-                    _context.Templates.Add(newTem);
+                    _context.Pages.Add(newTem);
                     await _context.SaveChangesAsync(cancellationToken);
 
-                    var newstore = _mapper.Map<PageDto>(newTem);
+                    var newpage = _mapper.Map<PageDto>(newTem);
 
-                    return Result<PageDto>.Success(newstore);
+                    return Result<PageDto>.Success(newpage);
                 }
                 catch(Exception ex)
                 {
