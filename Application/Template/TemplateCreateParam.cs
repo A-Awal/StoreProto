@@ -1,13 +1,7 @@
-﻿namespace Application.Template
+namespace Application.Template
 {
-    public class TemplateCreateParam
+	public class TemplateCreateParam : TemplateAbstract
     {
-        public string TemplateCategory { get; set; }
-        public string MainHearderTextSize { get; set; }
-        public string SubHearderTextsize { get; set; }
-        public string HeroMainHearderText { get; set; }
-        public string HeroMainSubHearderText { get; set; }
-        public string FooterTextHearder { get; set; }
-        public string SocialMedia { get; set; }
+        public string StoreName { get; set; }
     }
 }

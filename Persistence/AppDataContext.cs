@@ -7,9 +7,9 @@ public class AppDataContext: DbContext
     public AppDataContext(DbContextOptions<AppDataContext> options): base(options)
     { }
 
-    public  DbSet<User> Users { get; set; }
-    public  DbSet<Merchant> Merchants { get; set; }
-    public  DbSet<Customer> Customers { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Merchant> Merchants { get; set; }
+    public DbSet<Customer> Customers { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
@@ -18,7 +18,7 @@ public class AppDataContext: DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<Page> Pages { get; set; }
     public DbSet<Template> Templates { get; set; }
-    public DbSet<ShipingDetails> ShipingDetails { get; set; }
+    public DbSet<ShippingDetails> ShipingDetails { get; set; }
     public DbSet<CreditCardDetail> CreditCardDetails { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<ProductPhoto> ProductPhotos { get; set; }
@@ -50,15 +50,11 @@ public class AppDataContext: DbContext
         modelBuilder.Entity<Purchase>( 
             entity =>
             {
-            entity.HasKey(d => new { d.CustomerId, d.DatePurchased });
+            entity.HasKey(d => new { d.OrderId, d.DatePurchased });
 
             entity.HasOne<Product>(d => d.Product)
             .WithMany(p => p.Purchases)
             .HasForeignKey(o => o.ProductId);
-
-            entity.HasOne<Order>()
-            .WithMany( o => o.Purchases)
-            .HasForeignKey(o => o.CustomerId);
 
             }
         );
@@ -87,11 +83,6 @@ public class AppDataContext: DbContext
             }
         );
 
-        modelBuilder.Entity<ShipingDetails>(entity =>
-        {
-            entity.HasKey(s => new { s.StoreId, s.CustomerId });
-        });
-
         modelBuilder.Entity<CreditCardDetail>(entity =>
         {
             entity.HasKey(s => new { s.StoreId, s.CustomerId });
@@ -102,6 +93,80 @@ public class AppDataContext: DbContext
             entity.HasKey(s => s.TemplateId);
         });
 
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_cace4a159ff9f2512dd42373760");
+
+            entity.ToTable("user");
+
+            entity.HasIndex(e => e.Email, "UQ_e12875dfb3b1d92d7d7c5377e22").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("id");
+            entity.Property(e => e.Activated).HasDefaultValueSql("false").HasColumnName("activated");
+            
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Email)
+                .HasColumnType("character varying")
+                .HasColumnName("email");
+            entity.Property(e => e.FirstName)
+                .HasColumnType("character varying")
+                .HasColumnName("first_name");
+            entity.Property(e => e.LastName)
+                .HasColumnType("character varying")
+                .HasColumnName("last_name");
+            entity.Property(e => e.OauthId)
+                .HasColumnType("character varying")
+                .HasColumnName("oauth_id");
+            entity.Property(e => e.Password)
+                .HasColumnType("character varying")
+                .HasColumnName("password");
+            entity.Property(e => e.PhoneNumber)
+                .HasColumnType("character varying")
+                .HasColumnName("phone_number");
+            entity.Property(e => e.Role)
+                .HasColumnType("character varying")
+                .HasColumnName("role");
+
+            entity.HasDiscriminator(e => e.Role);
+        });
+
+        modelBuilder.Entity<Merchant>(entity =>
+            {
+                entity.Property(e => e.BusinessName)
+                .HasColumnType("character varying")
+                .HasColumnName("business_name");
+            });
+        modelBuilder.Entity<Customer>(entity =>
+            {
+                entity.Property(e => e.OrderId).HasColumnName("orderId");
+
+            });
+
+        modelBuilder.Entity<Token>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_82fae97f905930df5d62a702fc9");
+
+            entity.ToTable("token");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ActivationCode)
+                .HasColumnType("character varying")
+                .HasColumnName("activation_code");
+            entity.Property(e => e.Token1)
+                .HasColumnType("character varying")
+                .HasColumnName("token");
+            entity.Property(e => e.UserId)
+                .HasColumnType("character varying")
+                .HasColumnName("user_id");
+        });
+
+
     }
+
 
 }

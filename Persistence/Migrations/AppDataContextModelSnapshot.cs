@@ -97,6 +97,9 @@ namespace Persistence.Migrations
                     b.Property<int>("OrderState")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ShippindDetailsId")
+                        .HasColumnType("uuid");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("numeric");
 
@@ -113,31 +116,58 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("FooterTextHearder")
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FacebookLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FooterText")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Heading")
                         .HasColumnType("text");
 
                     b.Property<string>("HeroImage")
                         .HasColumnType("text");
 
-                    b.Property<string>("HeroMainHearderText")
-                        .HasColumnType("text");
-
-                    b.Property<string>("HeroMainSubHearderText")
+                    b.Property<string>("InstagramLink")
                         .HasColumnType("text");
 
                     b.Property<string>("Logo")
                         .HasColumnType("text");
 
-                    b.Property<string>("MainHearderTextSize")
+                    b.Property<string>("MainColor")
                         .HasColumnType("text");
 
-                    b.Property<string>("SocialMedia")
+                    b.Property<string>("MainHeaderTextSize")
                         .HasColumnType("text");
+
+                    b.Property<string>("PageCategory")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PageNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Publish")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("StoreId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("SubHearderTextsize")
+                    b.Property<string>("SubColor")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubHeaderTextsize")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubHeading")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TwitterLink")
                         .HasColumnType("text");
 
                     b.HasKey("PageId");
@@ -183,6 +213,9 @@ namespace Persistence.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("text");
 
+                    b.Property<bool>("Publish")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -204,14 +237,11 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Purchase", b =>
                 {
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DatePurchased")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
@@ -222,9 +252,7 @@ namespace Persistence.Migrations
                     b.Property<int>("QuantityPurchased")
                         .HasColumnType("integer");
 
-                    b.HasKey("CustomerId", "DatePurchased");
-
-                    b.HasIndex("OrderId");
+                    b.HasKey("OrderId", "DatePurchased");
 
                     b.HasIndex("ProductId");
 
@@ -253,9 +281,10 @@ namespace Persistence.Migrations
                     b.ToTable("ReviewReplies");
                 });
 
-            modelBuilder.Entity("Domain.ShipingDetails", b =>
+            modelBuilder.Entity("Domain.ShippingDetails", b =>
                 {
-                    b.Property<Guid>("StoreId")
+                    b.Property<Guid>("ShippingDetailsId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CustomerId")
@@ -264,9 +293,14 @@ namespace Persistence.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("text");
 
-                    b.HasKey("StoreId", "CustomerId");
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ShippingDetailsId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("ShipingDetails");
                 });
@@ -276,6 +310,12 @@ namespace Persistence.Migrations
                     b.Property<Guid>("StoreId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Currency")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CurrencySymbol")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("MerchantId")
                         .HasColumnType("uuid");
@@ -296,31 +336,55 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("FooterTextHearder")
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FacebookLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FooterText")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Heading")
                         .HasColumnType("text");
 
                     b.Property<string>("HeroImage")
                         .HasColumnType("text");
 
-                    b.Property<string>("HeroMainHearderText")
-                        .HasColumnType("text");
-
-                    b.Property<string>("HeroMainSubHearderText")
+                    b.Property<string>("InstagramLink")
                         .HasColumnType("text");
 
                     b.Property<string>("Logo")
                         .HasColumnType("text");
 
-                    b.Property<string>("MainHearderTextSize")
+                    b.Property<string>("MainColor")
                         .HasColumnType("text");
 
-                    b.Property<string>("SocialMedia")
+                    b.Property<string>("MainHeaderTextSize")
                         .HasColumnType("text");
 
-                    b.Property<string>("SubHearderTextsize")
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StoreName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubColor")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubHeaderTextsize")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SubHeading")
                         .HasColumnType("text");
 
                     b.Property<string>("TemplateCategory")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TemplateNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TwitterLink")
                         .HasColumnType("text");
 
                     b.HasKey("TemplateId");
@@ -328,42 +392,91 @@ namespace Persistence.Migrations
                     b.ToTable("Templates");
                 });
 
+            modelBuilder.Entity("Domain.Token", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActivationCode")
+                        .HasColumnType("character varying")
+                        .HasColumnName("activation_code");
+
+                    b.Property<string>("Token1")
+                        .HasColumnType("character varying")
+                        .HasColumnName("token");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("character varying")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("PK_82fae97f905930df5d62a702fc9");
+
+                    b.ToTable("token", (string)null);
+                });
+
             modelBuilder.Entity("Domain.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("Activated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasColumnName("activated")
+                        .HasDefaultValueSql("false");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying")
+                        .HasColumnName("email");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying")
+                        .HasColumnName("last_name");
+
+                    b.Property<string>("OauthId")
+                        .HasColumnType("character varying")
+                        .HasColumnName("oauth_id");
 
                     b.Property<string>("Password")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying")
+                        .HasColumnName("password");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("character varying")
+                        .HasColumnName("phone_number");
 
-                    b.Property<string>("UserType")
-                        .HasColumnType("text");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("role");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_cace4a159ff9f2512dd42373760");
 
-                    b.ToTable("Users");
+                    b.HasIndex(new[] { "Email" }, "UQ_e12875dfb3b1d92d7d7c5377e22")
+                        .IsUnique();
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
+                    b.ToTable("user", (string)null);
+
+                    b.HasDiscriminator<string>("Role").HasValue("User");
 
                     b.UseTphMappingStrategy();
                 });
@@ -409,10 +522,8 @@ namespace Persistence.Migrations
                     b.HasBaseType("Domain.User");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("text");
+                        .HasColumnType("uuid")
+                        .HasColumnName("orderId");
 
                     b.HasDiscriminator().HasValue("Customer");
                 });
@@ -420,6 +531,10 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Merchant", b =>
                 {
                     b.HasBaseType("Domain.User");
+
+                    b.Property<string>("BusinessName")
+                        .HasColumnType("character varying")
+                        .HasColumnName("business_name");
 
                     b.HasDiscriminator().HasValue("Merchant");
                 });
@@ -497,14 +612,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Purchase", b =>
                 {
-                    b.HasOne("Domain.Order", null)
-                        .WithMany("Purchases")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Order", "Order")
-                        .WithMany()
+                        .WithMany("Purchases")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -539,7 +648,7 @@ namespace Persistence.Migrations
                     b.Navigation("Review");
                 });
 
-            modelBuilder.Entity("Domain.ShipingDetails", b =>
+            modelBuilder.Entity("Domain.ShippingDetails", b =>
                 {
                     b.HasOne("Domain.Customer", "Customer")
                         .WithMany("ShipingDetails")

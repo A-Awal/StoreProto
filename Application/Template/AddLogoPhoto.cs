@@ -1,6 +1,6 @@
 using Application.Core;
+using Application.Interfaces;
 using Application.Photos;
-using Application.Services;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -11,10 +11,10 @@ namespace Application.Template
 {
     public class AddLogoPhoto
     {
-        public class Command:IRequest<Result<PhotoUploadResult>>
+        public class Command : IRequest<Result<PhotoUploadResult>>
         {
-        public IFormFile LogoPhoto { get; set; }
-        public Guid TemplateId {get; set; }
+            public IFormFile LogoPhoto { get; set; }
+            public Guid TemplateId { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<PhotoUploadResult>>
@@ -30,29 +30,46 @@ namespace Application.Template
                 _photoAccessor = photoAccessor;
             }
 
-            public async Task<Result<PhotoUploadResult>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<PhotoUploadResult>> Handle(
+                Command request,
+                CancellationToken cancellationToken
+            )
             {
-                var tem = _context.Templates.Find(request.TemplateId);
+                var template = _context.Templates.Find(request.TemplateId);
 
+                if (template == null)
+                    return Result<PhotoUploadResult>.Failure("Template does not exist");
+
+                try
+                {
                     var logo = await _photoAccessor.AddPhoto(request.LogoPhoto);
-                    tem.Logo = logo.PublicId;
+                    template.Logo = logo.PublicId;
 
                     TemplatePhoto logoPhoto = new TemplatePhoto
                     {
                         Id = logo.PublicId,
                         Url = logo.Url,
-                        TemplateId = tem.TemplateId
+                        TemplateId = template.TemplateId
                     };
 
                     _context.TemplatePhotos.Add(logoPhoto);
 
-                    await _context.SaveChangesAsync();
+                    var success = await _context.SaveChangesAsync() > 0;
 
-                    var res = _mapper.Map<PhotoUploadResult>(logoPhoto);
+                    if (success)
+                    {
+                        var result = _mapper.Map<PhotoUploadResult>(logoPhoto);
 
-                    return Result<PhotoUploadResult>.Success(res);
+                        return Result<PhotoUploadResult>.Success(result);
+                    }
+
+                    return Result<PhotoUploadResult>.Failure("Couldn't upload photo");
+                }
+                catch (Exception ex)
+                {
+                    return Result<PhotoUploadResult>.Failure(ex.Message);
+                }
             }
         }
-
     }
 }

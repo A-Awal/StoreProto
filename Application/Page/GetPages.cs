@@ -1,18 +1,19 @@
-﻿using Application.Core;
+using Application.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Page
 {
     public class GetPages
     {
-        public class Query : IRequest<Result<PageDto>>
+        public class Query : IRequest<Result<List<PageDto>>>
         {
             public GetPageParam GetPageParam { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<PageDto>>
+        public class Handler : IRequestHandler<Query, Result<List<PageDto>>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -23,24 +24,30 @@ namespace Application.Page
                 _mapper = mapper;
             }
 
-            public async Task<Result<PageDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<PageDto>>> Handle(
+                Query request,
+                CancellationToken cancellationToken
+            )
             {
                 var page = _context.Pages
+                    .Include(p => p.PagePhotos)
                     .Where(t => t.StoreId == request.GetPageParam.StoreId)
                     .AsQueryable();
-                if(request.GetPageParam.PageId != Guid.Empty)
+
+                if (!string.IsNullOrEmpty(request.GetPageParam.PageCategory))
                 {
-                    page = page.Where( d => d.PageId == request.GetPageParam.PageId);
+                    page = page.Where(d => d.PageCategory == request.GetPageParam.PageCategory);
                 }
 
                 if (page == null)
                 {
-                    return Result<PageDto>.Failure("This category does not exist");
+                    return Result<List<PageDto>>.Failure("This category does not exist");
                 }
 
-                var toReturn = _mapper.Map<PageDto>(page);
+                var pageToReturn = await page.ToListAsync();
+                var toReturn = _mapper.Map<List<PageDto>>(pageToReturn);
 
-                return Result<PageDto>.Success(toReturn);
+                return Result<List<PageDto>>.Success(toReturn);
             }
         }
     }

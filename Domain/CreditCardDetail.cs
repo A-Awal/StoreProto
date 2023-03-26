@@ -1,6 +1,6 @@
-﻿namespace Domain
+namespace Domain
 {
-    public class CreditCardDetail
+	public class CreditCardDetail
     {
         public Guid CustomerId { get; set; }
         public Guid StoreId { get; set; }
@@ -11,6 +11,5 @@
         public Customer Customer { get; set; }
         public Store Store { get; set; }
         public string Cvc { get; set; }
-
     }
 }

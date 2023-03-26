@@ -1,15 +1,16 @@
-﻿using Application.Core;
+using Application.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Page
 {
     public class Create
     {
-        public class Command: IRequest<Result<PageDto>>
+        public class Command : IRequest<Result<PageDto>>
         {
-            public PageDto PageDto { get; set; }
+            public CreatePageParam CreatePageParam { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<PageDto>>
@@ -23,28 +24,46 @@ namespace Application.Page
                 _mapper = mapper;
             }
 
-            public async Task<Result<PageDto>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<PageDto>> Handle(
+                Command request,
+                CancellationToken cancellationToken
+            )
             {
-                var store = _context.Stores.Find(request.PageDto.StoreId);
+                var store = _context.Stores.Find(request.CreatePageParam.StoreId);
 
-                if (store == null) return Result<PageDto>.Failure("store does not exist");
+                if (store == null)
+                    return Result<PageDto>.Failure("store does not exist");
 
                 try
                 {
-                    Domain.Page newTem = _mapper.Map<Domain.Page>(request.PageDto);
-                    
-                    _context.Pages.Add(newTem);
-                    await _context.SaveChangesAsync(cancellationToken);
+                    Domain.Page newPage = _mapper.Map<Domain.Page>(request.CreatePageParam);
+                    newPage.HeroImage = "";
+                    newPage.Logo = "";
 
-                    var newpage = _mapper.Map<PageDto>(newTem);
+                    _context.Pages.Add(newPage);
+                    var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-                    return Result<PageDto>.Success(newpage);
+                    if (success)
+                    {
+                        var pageToReturn = _context.Pages
+                            .Include(p => p.Store)
+                            .FirstOrDefault(
+                                p =>
+                                    p.PageCategory == newPage.PageCategory
+                                    && p.PageNumber == newPage.PageNumber
+                            );
+
+                        var PageToReturn = _mapper.Map<PageDto>(pageToReturn);
+
+                        return Result<PageDto>.Success(PageToReturn);
+                    }
+
+                    return Result<PageDto>.Failure("Could not create Page");
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     return Result<PageDto>.Failure(ex.Message);
                 }
-                
             }
         }
     }

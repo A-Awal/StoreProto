@@ -1,13 +1,12 @@
-﻿using Domain;
+using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
-    public class SeedData
+	public class SeedData
     {
         public static async Task Seed(AppDataContext context)
         {
-
             var customers = new List<Customer>
                 {
                     new Customer
@@ -16,7 +15,6 @@ namespace Persistence
                         FirstName = "Chipo",
                         LastName = "Poolo",
                         PhoneNumber = "0298827",
-                        Username = "Chipoolopoolo",
                         Password = "Pa$$w0rd",
                     },
                      new Customer
@@ -25,7 +23,6 @@ namespace Persistence
                         FirstName = "Boole",
                         LastName = "ata",
                         PhoneNumber = "0298827",
-                        Username = "Boleeta",
                         Password = "Pa$$w0rd",
                     },
                       new Customer
@@ -34,7 +31,6 @@ namespace Persistence
                         FirstName = "Gire",
                         LastName = "Gire",
                         PhoneNumber = "0298827",
-                        Username = "Girigiri",
                         Password = "Pa$$w0rd",
                     },
                        new Customer
@@ -43,7 +39,6 @@ namespace Persistence
                         FirstName = "Oroginal",
                         LastName = "Fawat",
                         PhoneNumber = "0298827",
-                        Username = "Fawwat",
                         Password = "Pa$$w0rd",
                     },
 
@@ -113,27 +108,22 @@ namespace Persistence
                 new Store
                 {
                     MerchantId = mer[1].Id,
-
                 },
                 new Store
                 {
                     MerchantId = mer[4].Id,
-
                 },
                 new Store
                 {
                     MerchantId = mer[4].Id,
-
                 },
                 new Store
                 {
                     MerchantId = mer[0].Id,
-
                 },
                 new Store
                 {
                     MerchantId = mer[2].Id,
-
                 },
 
             };
@@ -185,65 +175,65 @@ namespace Persistence
             await context.Products.AddRangeAsync(products);
             await context.SaveChangesAsync();
 
-            var cus = await context.Customers.ToListAsync();
-            var pro = await context.Products.ToListAsync();
+            // // var cus = await context.Customers.ToListAsync();
+            // var pro = await context.Products.ToListAsync();
+
+            // var purchases = new List<Purchase>
+            // {
+            //     new Purchase
+            //     { 
+            //         CustomerId = cus[3].Id,
+            //         DatePurchased = DateTime.UtcNow.AddDays(9),
+            //         ProductId = pro[1].ProductId,
+            //         QuantityPurchased = 30,
+            //     },
+            //     new Purchase
+            //     {
+            //         CustomerId = cus[2].Id,
+            //         DatePurchased = DateTime.UtcNow.AddDays(5),
+            //         ProductId = pro[4].ProductId,                   
+            //         QuantityPurchased = 5,
+            //     },
+            //     new Purchase
+            //     {
+            //         CustomerId = cus[3].Id,
+            //         DatePurchased = DateTime.UtcNow.AddDays(1),
+            //         ProductId = pro[3].ProductId,
+            //         QuantityPurchased = 10,
+            //     },
+            //     new Purchase
+            //     {
+            //         CustomerId = cus[2].Id,
+            //         DatePurchased = DateTime.UtcNow,
+            //         ProductId = pro[0].ProductId,
+            //         QuantityPurchased = 15,
+            //     },
+            //     new Purchase
+            //     {
+            //         CustomerId = cus[0].Id,
+            //         DatePurchased = DateTime.UtcNow.AddDays(2),
+            //         ProductId = pro[4].ProductId,
+            //         QuantityPurchased = 30,
+            //     },
+            //     new Purchase
+            //     {
+            //         CustomerId = cus[3].Id,
+            //         DatePurchased = DateTime.UtcNow.AddDays(2),
+            //         ProductId = pro[1].ProductId,
+            //         QuantityPurchased = 30,
+            //     },
+            //     new Purchase
+            //     {
+            //         CustomerId = cus[0].Id,
+            //         DatePurchased = DateTime.UtcNow.AddDays(0),
+            //         ProductId = pro[1].ProductId,
+            //         QuantityPurchased = 30,
+            //     },
 
 
-            var Purchases = new List<Purchase>
-            {
-                new Purchase
-                { 
-                    CustomerId = cus[3].Id,
-                    DatePurchased = DateTime.UtcNow.AddDays(9),
-                    ProductId = pro[1].ProductId,
-                    QuantityPurchased = 30,
-                },
-                new Purchase
-                {
-                    CustomerId = cus[2].Id,
-                    DatePurchased = DateTime.UtcNow.AddDays(5),
-                    ProductId = pro[4].ProductId,                   
-                    QuantityPurchased = 5,
-                },
-                new Purchase
-                {
-                    CustomerId = cus[3].Id,
-                    DatePurchased = DateTime.UtcNow.AddDays(1),
-                    ProductId = pro[3].ProductId,
-                    QuantityPurchased = 10,
-                },
-                new Purchase
-                {
-                    CustomerId = cus[2].Id,
-                    DatePurchased = DateTime.UtcNow,
-                    ProductId = pro[0].ProductId,
-                    QuantityPurchased = 15,
-                },
-                new Purchase
-                {
-                    CustomerId = cus[0].Id,
-                    DatePurchased = DateTime.UtcNow.AddDays(2),
-                    ProductId = pro[4].ProductId,
-                    QuantityPurchased = 30,
-                },
-                new Purchase
-                {
-                    CustomerId = cus[3].Id,
-                    DatePurchased = DateTime.UtcNow.AddDays(2),
-                    ProductId = pro[1].ProductId,
-                    QuantityPurchased = 30,
-                },
-                new Purchase
-                {
-                    CustomerId = cus[0].Id,
-                    DatePurchased = DateTime.UtcNow.AddDays(0),
-                    ProductId = pro[1].ProductId,
-                    QuantityPurchased = 30,
-                },
-
-            };
-            await context.Purchases.AddRangeAsync(Purchases);
-            await context.SaveChangesAsync();
+            // };
+            // await context.Purchases.AddRangeAsync(purchases);
+            // await context.SaveChangesAsync();
             
         }
     }

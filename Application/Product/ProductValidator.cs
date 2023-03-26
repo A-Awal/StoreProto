@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace Application.Product
 {
@@ -11,6 +11,7 @@ namespace Application.Product
             RuleFor(x => x.ProductCategory).NotEmpty();
             RuleFor(x => x.UnitOfMeasurement).NotNull();
             RuleFor(x => x.Quantity).NotEmpty();
+            RuleFor(x => x.StoreId).NotNull();
         }
     }
 }

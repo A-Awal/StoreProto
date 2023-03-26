@@ -1,6 +1,6 @@
 using Application.Core;
+using Application.Interfaces;
 using Application.Photos;
-using Application.Services;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -35,25 +35,39 @@ namespace Application.Template
                 CancellationToken cancellationToken
             )
             {
-                var tem = _context.Templates.Find(request.TemplateId);
+                var template = _context.Templates.Find(request.TemplateId);
 
-                var HeroImage = await _photoAccessor.AddPhoto(request.HeroPhoto);
-                tem.HeroImage = HeroImage.PublicId;
+                if (template == null)
+                    return Result<PhotoUploadResult>.Failure("Template does not exist");
 
-                TemplatePhoto heroPhoto = new TemplatePhoto
+                try
                 {
-                    Id = HeroImage.PublicId,
-                    Url = HeroImage.Url,
-                    TemplateId = tem.TemplateId
-                };
+                    var HeroImage = await _photoAccessor.AddPhoto(request.HeroPhoto);
+                    template.HeroImage = HeroImage.PublicId;
 
-                _context.TemplatePhotos.Add(heroPhoto);
+                    TemplatePhoto heroPhoto = new TemplatePhoto
+                    {
+                        Id = HeroImage.PublicId,
+                        Url = HeroImage.Url,
+                        TemplateId = template.TemplateId
+                    };
 
-                await _context.SaveChangesAsync();
+                    _context.TemplatePhotos.Add(heroPhoto);
 
-                var res = _mapper.Map<PhotoUploadResult>(heroPhoto);
+                    var success = await _context.SaveChangesAsync() > 0;
 
-                return Result<PhotoUploadResult>.Success(res);
+                    if (success)
+                    {
+                        var result = _mapper.Map<PhotoUploadResult>(heroPhoto);
+                        return Result<PhotoUploadResult>.Success(result);
+                    }
+                    
+                    return Result<PhotoUploadResult>.Failure("Could not add hero photo");
+                }
+                catch (Exception ex)
+                {
+                    return Result<PhotoUploadResult>.Failure(ex.Message);
+                }
             }
         }
     }

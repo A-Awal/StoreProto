@@ -1,34 +1,72 @@
-﻿using Api.Controllers;
-using Application.Photos;
 using Application.Template;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace Api.Controllers
 {
     public class TemplateController : BaseApiController
     {
-        [HttpGet]
+        [HttpGet("Search")]
         public async Task<IActionResult> GetTemplate(string CategoryName)
         {
-            return HandleResult(await Mediator.Send(new Application.Template.GetATemplate.Query{ Category = CategoryName}));
+            return HandleResult(
+                await Mediator.Send(
+                    new Application.Template.GetTemplate.Query { Category = CategoryName }
+                )
+            );
         }
 
-        [HttpPost]
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateTemplate(TemplateUpdateParam templateUpdateParam)
+        {
+            return HandleResult(
+                await Mediator.Send(
+                    new Application.Template.Update.Command
+                    {
+                        TemplateUpdateParam = templateUpdateParam
+                    }
+                )
+            );
+        }
+
+        [HttpPost("create")]
         public async Task<IActionResult> CreateTemplate(TemplateCreateParam templateCreateParam)
         {
-            return HandleResult(await Mediator.Send(new Application.Template.Create.Command { TemplateCreateParam = templateCreateParam}));
+            return HandleResult(
+                await Mediator.Send(
+                    new Application.Template.Create.Command
+                    {
+                        TemplateCreateParam = templateCreateParam
+                    }
+                )
+            );
         }
 
-        [HttpPost("Add-hero-photo")]
-        public async Task<IActionResult> AddHeroPhoto(IFormFile heroPhoto,  Guid templateId)
+        [HttpPost("AddHeroPhoto")]
+        public async Task<IActionResult> AddHeroPhoto(IFormFile heroPhoto, Guid templateId)
         {
-            return HandleResult(await Mediator.Send(new Application.Template.AddHeroPhoto.Command{ HeroPhoto = heroPhoto, TemplateId = templateId}));
-        }
-        [HttpPost("Add-logo-photo")]
-        public async Task<IActionResult> AddlogoPhoto(IFormFile logoPhoto,  Guid templateId)
-        {
-            return HandleResult(await Mediator.Send(new Application.Template.AddLogoPhoto.Command{LogoPhoto = logoPhoto, TemplateId = templateId}));
+            return HandleResult(
+                await Mediator.Send(
+                    new Application.Template.AddHeroPhoto.Command
+                    {
+                        HeroPhoto = heroPhoto,
+                        TemplateId = templateId
+                    }
+                )
+            );
         }
 
+        [HttpPost("AddLogoPhoto")]
+        public async Task<IActionResult> AddlogoPhoto(IFormFile logoPhoto, Guid templateId)
+        {
+            return HandleResult(
+                await Mediator.Send(
+                    new Application.Template.AddLogoPhoto.Command
+                    {
+                        LogoPhoto = logoPhoto,
+                        TemplateId = templateId
+                    }
+                )
+            );
+        }
     }
 }

@@ -1,9 +1,7 @@
-using System;
 namespace Domain
 {
-    public class Purchase
+	public class Purchase
 	{
-		public Guid CustomerId { get; set; }
 		public Guid ProductId { get; set; }
 		public Guid OrderId { get; set; }
 		public Product Product { get; set; }

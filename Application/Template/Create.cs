@@ -1,5 +1,6 @@
-﻿using Application.Core;
-using Application.Services;
+using Application.Core;
+using Application.Interfaces;
+using Application.Page;
 using AutoMapper;
 using MediatR;
 using Persistence;
@@ -8,52 +9,49 @@ namespace Application.Template
 {
     public class Create
     {
-        public class Command : IRequest<Result<Guid>>
+        public class Command : IRequest<Result<TemplateDto>>
         {
             public TemplateCreateParam TemplateCreateParam { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<Guid>>
+        public class Handler : IRequestHandler<Command, Result<TemplateDto>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
-            private readonly IPhotoAccessor _photoAccessor;
 
-            public Handler(AppDataContext context, IMapper mapper, IPhotoAccessor photoAccessor)
+            public Handler(AppDataContext context, IMapper mapper)
             {
-                _photoAccessor = photoAccessor;
                 _context = context;
                 _mapper = mapper;
             }
 
-            public async Task<Result<Guid>> Handle(
+            public async Task<Result<TemplateDto>> Handle(
                 Command request,
                 CancellationToken cancellationToken
             )
             {
                 try
                 {
-                    Domain.Template newTem = new Domain.Template
-                    {
-                        TemplateCategory = request.TemplateCreateParam.TemplateCategory,
-                        MainHearderTextSize  = request.TemplateCreateParam.MainHearderTextSize,
-                        SubHearderTextsize = request.TemplateCreateParam.SubHearderTextsize,
-                        HeroMainHearderText = request.TemplateCreateParam.HeroMainHearderText,
-                        HeroMainSubHearderText = request.TemplateCreateParam.HeroMainSubHearderText,
-                        FooterTextHearder = request.TemplateCreateParam.FooterTextHearder,
-                        SocialMedia = request.TemplateCreateParam.SocialMedia,
-                    };
+                    var newTemplate = _mapper.Map<Domain.Template>(request.TemplateCreateParam);
+                    newTemplate.HeroImage = "";
+                    newTemplate.Logo = "";
+                    newTemplate.MainHeaderTextSize = "";
+                    newTemplate.SubHeaderTextsize = "";
 
-                    _context.Templates.Add(newTem);
+                    _context.Templates.Add(newTemplate);
                     await _context.SaveChangesAsync();
 
-                    var tem = _context.Templates.First(t => t.TemplateCategory == newTem.TemplateCategory).TemplateId;
+                    var template = _context.Templates.First(
+                        t => t.TemplateNumber == newTemplate.TemplateNumber
+                    );
 
-                    return Result<Guid>.Success(tem);
+                    var templateToReturn = _mapper.Map<TemplateDto>(template);
+
+                    return Result<TemplateDto>.Success(templateToReturn);
                 }
                 catch (Exception ex)
                 {
-                    return Result<Guid>.Failure(ex.Message);
+                    return Result<TemplateDto>.Failure(ex.Message);
                 }
             }
         }

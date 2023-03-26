@@ -1,4 +1,4 @@
-﻿using Api.Controllers;
+using Api.Controllers;
 using Application.Product;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,22 +14,36 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetProduct(string productName)
+        [HttpGet("Search")]
+        public async Task<IActionResult> GetProduct()
         {
-            return HandleResult(await _mediator.Send(new Products.Query { ProductName = productName }));
+            return HandleResult(await _mediator.Send(new Products.Query { }));
         }
 
         [HttpPost("Create")]
         public async Task<IActionResult> CreateProduct(ProductCreateParam product)
         {
-            return HandleResult(await _mediator.Send(new Create.Command { ProductCreateParam = product }));
+            return HandleResult(
+                await _mediator.Send(new Create.Command { ProductCreateParam = product })
+            );
         }
 
-        [HttpGet("Quantity")]
-        public async Task<IActionResult> Available(Guid productId)
+        [HttpPut("Update")]
+        public async Task<IActionResult> UpdateProduct(ProductUpdateParam productUpdateParam)
         {
-            return HandleResult(await _mediator.Send(new Availability.Query { ProductId = productId }));
+            return HandleResult(
+                await _mediator.Send(new Update.Command { ProductUpdateParam = productUpdateParam })
+            );
+        }
+
+        [HttpPost("AddPhoto")]
+        public async Task<IActionResult> UpdateProduct(IFormFile productPhoto, Guid productId)
+        {
+            return HandleResult(
+                await _mediator.Send(
+                    new AddPhoto.Command { ProductPhoto = productPhoto, ProductId = productId }
+                )
+            );
         }
     }
 }
