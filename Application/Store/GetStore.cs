@@ -1,3 +1,7 @@
+using System;
+using System.Net.Http;
+using System.Net;
+using System.Net.Cache;
 using Application.Core;
 using AutoMapper;
 using MediatR;
@@ -10,8 +14,8 @@ namespace Application.Store
     {
         public class Query : IRequest<Result<List<GetStoreDto>>>
         {
-            public Guid StoreId { get; set; }
-			public Guid MerchantId { get; set; }
+            public Guid? StoreId { get; set; }
+			public Guid? MerchantId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<List<GetStoreDto>>>
@@ -30,10 +34,14 @@ namespace Application.Store
                 CancellationToken cancellationToken
             )
             {
-				var store = _context.Stores.Include(s => s.Pages).Where(s => s.MerchantId == request.MerchantId).AsQueryable();
+				var store = _context.Stores.Include(s => s.Pages).AsQueryable();
+
 
                 if (store != null)
                 {
+                    if(request.MerchantId != Guid.Empty)
+                        store = store.Where(s => s.MerchantId == request.MerchantId).AsQueryable();
+
 					if(request.StoreId != Guid.Empty)
 					{
 						store = store.Where(s => s.StoreId == request.StoreId);

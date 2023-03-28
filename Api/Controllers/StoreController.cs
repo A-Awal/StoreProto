@@ -1,3 +1,4 @@
+using System;
 using Application.Store;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,11 @@ namespace Api.Controllers
         }
 
         [HttpGet("GetStore")]
-        public async Task<IActionResult> GetStore(Guid merchantId)
+        public async Task<IActionResult> GetStore(Guid? merchantId , Guid? storeId)
         {
             return HandleResult(
                 await Mediator.Send(
-                    new Application.Store.GetStore.Query { MerchantId = merchantId }
+                    new Application.Store.GetStore.Query { MerchantId = merchantId, StoreId = storeId }
                 )
             );
         }
