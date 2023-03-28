@@ -1,19 +1,20 @@
 using Application.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Store
 {
     public class GetStore
     {
-        public class Query : IRequest<Result<List<StoreDto>>>
+        public class Query : IRequest<Result<List<GetStoreDto>>>
         {
             public Guid StoreId { get; set; }
 			public Guid MerchantId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<List<StoreDto>>>
+        public class Handler : IRequestHandler<Query, Result<List<GetStoreDto>>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,12 +25,12 @@ namespace Application.Store
                 _mapper = mapper;
             }
 
-            public async Task<Result<List<StoreDto>>> Handle(
+            public async Task<Result<List<GetStoreDto>>> Handle(
                 Query request,
                 CancellationToken cancellationToken
             )
             {
-				var store = _context.Stores.Where(s => s.MerchantId == request.MerchantId).AsQueryable();
+				var store = _context.Stores.Include(s => s.Pages).Where(s => s.MerchantId == request.MerchantId).AsQueryable();
 
                 if (store != null)
                 {
@@ -38,12 +39,12 @@ namespace Application.Store
 						store = store.Where(s => s.StoreId == request.StoreId);
 					}
 
-					var storeDto = _mapper.Map<List<StoreDto>>(store);
+					var storeDto = _mapper.Map<List<GetStoreDto>>(store);
 
-					return Result<List<StoreDto>>.Success(storeDto);
+					return Result<List<GetStoreDto>>.Success(storeDto);
                 }
 
-                return Result<List<StoreDto>>.Failure("Store does not exist");
+                return Result<List<GetStoreDto>>.Failure("Store does not exist");
             }
         }
     }

@@ -23,7 +23,8 @@ namespace Application.Core
                 .ForMember(pd => pd.StoreName, opt => opt.MapFrom(p => p.Store.StoreName));
             
             CreateMap<Domain.Store, StoreDto>();
-            CreateMap<Domain.Store, StoreDto>();
+            CreateMap<Domain.Store, GetStoreDto>()
+                .ForMember(sd => sd.pages, opt => opt.MapFrom(s => s.Pages));
 
             CreateMap<Domain.Template, TemplateDto>()
                 .ForMember(td => td.HeroImage, opt => 
