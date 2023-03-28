@@ -14,8 +14,8 @@ namespace Application.Store
     {
         public class Query : IRequest<Result<List<GetStoreDto>>>
         {
-            public Guid? StoreId { get; set; }
-			public Guid? MerchantId { get; set; }
+            public Guid StoreId { get; set; }
+			public Guid MerchantId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<List<GetStoreDto>>>
@@ -40,7 +40,7 @@ namespace Application.Store
                 if (store != null)
                 {
                     if(request.MerchantId != Guid.Empty)
-                        store = store.Where(s => s.MerchantId == request.MerchantId).AsQueryable();
+                        store = store.Where(s => s.MerchantId == request.MerchantId);
 
 					if(request.StoreId != Guid.Empty)
 					{
