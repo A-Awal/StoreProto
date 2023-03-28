@@ -5,20 +5,34 @@ using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("aspbackend")));
+builder.Services.AddDbContext<AppDataContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("aspbackend"))
+);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddServices(builder.Configuration);
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("https://storefrontsmes.amalitech-dev.net/", "http://localhost:3002", "http://localhost:5173");
+        }
+    );
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+app.UseCors(MyAllowSpecificOrigins);
 
-if (app.Environment.IsDevelopment())
-{
-}
+if (app.Environment.IsDevelopment()) { }
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -28,18 +42,18 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// using var scope = app.Services.CreateScope();
-// var services = scope.ServiceProvider;
-// try
-// {
-//    var context = services.GetRequiredService<AppDataContext>();
-//    await context.Database.MigrateAsync(); // equivalent database Update
-//    await SeedData.Seed(context);
-// }
-// catch (Exception ex)
-// {
-//    var logger = services.GetRequiredService<ILogger<Program>>();
-//    logger.LogError(ex, "An Error occured during migration");
-// }
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<AppDataContext>();
+    await context.Database.MigrateAsync(); // equivalent database Update
+    await SeedData.Seed(context);
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An Error occured during migration");
+}
 
 app.Run();
