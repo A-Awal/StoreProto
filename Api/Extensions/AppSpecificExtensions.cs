@@ -7,6 +7,7 @@ using Application.Interfaces;
 using Infrastructure.Photos;
 using Stripe;
 using Infrastructure.Stripe;
+using Microsoft.AspNetCore.Cors;
 
 namespace Api.Extensions
 {

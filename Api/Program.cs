@@ -2,6 +2,7 @@ using Api.Extensions;
 using Api.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Microsoft.AspNetCore.Cors;
 
 
 var builder = WebApplication.CreateBuilder(args);
