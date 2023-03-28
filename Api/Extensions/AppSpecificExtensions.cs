@@ -28,8 +28,7 @@ namespace Api.Extensions
             StripeConfiguration.ApiKey = config.GetValue<string>("StripeOptions:SecretKey");
 
             services.AddScoped<IStripeService, StripeService>();
-            services.AddCors();
-
+            
             return services;
         }
     }

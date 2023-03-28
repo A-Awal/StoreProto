@@ -2,8 +2,6 @@ using Api.Extensions;
 using Api.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using Microsoft.AspNetCore.Cors;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,20 +13,29 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddServices(builder.Configuration);
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.SetIsOriginAllowed(isOriginAllowed: _ => true);
+        }
+    );
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 
 if (app.Environment.IsDevelopment()) { }
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
-app.UseCors(builder => builder
-     .AllowAnyOrigin()
-     .AllowAnyMethod()
-     .AllowAnyHeader()
-     .AllowCredentials());
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllers();
 
