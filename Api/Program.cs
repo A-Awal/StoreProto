@@ -13,32 +13,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddServices(builder.Configuration);
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        name: MyAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("https://storefrontsmes.amalitech-dev.net/", "http://localhost:3002", "http://localhost:5173");
-        }
-    );
-});
-
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseCors(MyAllowSpecificOrigins);
 
 if (app.Environment.IsDevelopment()) { }
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseCors(builder => builder
+     .AllowAnyOrigin()
+     .AllowAnyMethod()
+     .AllowAnyHeader()
+     .AllowCredentials());
 
 app.MapControllers();
 
