@@ -7,13 +7,13 @@ namespace Application.Store
 {
     public class GetStore
     {
-        public class Query : IRequest<Result<StoreDto>>
+        public class Query : IRequest<Result<List<StoreDto>>>
         {
             public Guid StoreId { get; set; }
 			public Guid MerchantId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<StoreDto>>
+        public class Handler : IRequestHandler<Query, Result<List<StoreDto>>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace Application.Store
                 _mapper = mapper;
             }
 
-            public async Task<Result<StoreDto>> Handle(
+            public async Task<Result<List<StoreDto>>> Handle(
                 Query request,
                 CancellationToken cancellationToken
             )
@@ -38,12 +38,12 @@ namespace Application.Store
 						store = store.Where(s => s.StoreId == request.StoreId);
 					}
 
-					var storeDto = _mapper.Map<StoreDto>(store);
+					var storeDto = _mapper.Map<List<StoreDto>>(store);
 
-					return Result<StoreDto>.Success(storeDto);
+					return Result<List<StoreDto>>.Success(storeDto);
                 }
 
-                return Result<StoreDto>.Failure("Store does not exist");
+                return Result<List<StoreDto>>.Failure("Store does not exist");
             }
         }
     }
