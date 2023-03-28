@@ -10,6 +10,7 @@ namespace Application.Store
         public class Query : IRequest<Result<StoreDto>>
         {
             public Guid StoreId { get; set; }
+			public Guid MerchantId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<StoreDto>>
@@ -28,12 +29,18 @@ namespace Application.Store
                 CancellationToken cancellationToken
             )
             {
-                var store = await _context.Stores.FindAsync(request.StoreId);
+				var store = _context.Stores.Where(s => s.MerchantId == request.MerchantId).AsQueryable();
 
-                if (store == null)
+                if (store != null)
                 {
-                    var storeDto = _mapper.Map<StoreDto>(store);
-                    return Result<StoreDto>.Success(storeDto);
+					if(request.StoreId != Guid.Empty)
+					{
+						store = store.Where(s => s.StoreId == request.StoreId);
+					}
+
+					var storeDto = _mapper.Map<StoreDto>(store);
+
+					return Result<StoreDto>.Success(storeDto);
                 }
 
                 return Result<StoreDto>.Failure("Store does not exist");

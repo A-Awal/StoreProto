@@ -14,5 +14,15 @@ namespace Api.Controllers
                 )
             );
         }
+
+        [HttpGet("GetStore")]
+        public async Task<IActionResult> GetStore(Guid merchantId)
+        {
+            return HandleResult(
+                await Mediator.Send(
+                    new Application.Store.GetStore.Query { MerchantId = merchantId }
+                )
+            );
+        }
     }
 }
