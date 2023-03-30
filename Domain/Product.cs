@@ -8,7 +8,7 @@ public class Product
 	public string UnitOfMeasurement { get; set; }
 	public int Quantity { get; set; }
 	public bool Publish { get; set; }
-	public Decimal UnitPrice { get; set; }
+	public decimal UnitPrice { get; set; }
 	public Guid StoreId { get; set; }
 	public Store Store { get; set; }
 	public List<Purchase> Purchases { get; set; }

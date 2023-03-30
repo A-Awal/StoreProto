@@ -47,6 +47,7 @@ namespace Application.Product
                         .ProductUpdateParam
                         .UnitOfMeasurement;
                     ProductToUpdate.Quantity = request.ProductUpdateParam.Quantity;
+                    ProductToUpdate.UnitPrice = request.ProductUpdateParam.UnitPrice;
 
                     _context.Products.Update(ProductToUpdate);
                     var success = await _context.SaveChangesAsync() > 0;
