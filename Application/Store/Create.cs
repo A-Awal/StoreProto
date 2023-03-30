@@ -1,4 +1,3 @@
-using System.Net.Cache;
 using Application.Core;
 using AutoMapper;
 using MediatR;
@@ -6,11 +5,11 @@ using Persistence;
 
 namespace Application.Store
 {
-	public class Create
+    public class Create
     {
         public class Command: IRequest<Result<StoreDto>>
         {
-            public CreateStoreParam CreateStoreParam { get; set; }
+            public CreateHompageParam CreateHomePageParam { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, Result<StoreDto>>
@@ -31,10 +30,10 @@ namespace Application.Store
                 {
                     Domain.Store newTem = new()
                     {
-                        MerchantId = request.CreateStoreParam.MerchantId,
-                        StoreName = request.CreateStoreParam.storeName,
-                        Currency = request.CreateStoreParam.Currency,
-                        CurrencySymbol = request.CreateStoreParam.CurrencySymbol,
+                        MerchantId = request.CreateHomePageParam.CreateStoreParam.MerchantId,
+                        StoreName = request.CreateHomePageParam.CreateStoreParam.storeName,
+                        Currency = request.CreateHomePageParam.CreateStoreParam.Currency,
+                        CurrencySymbol = request.CreateHomePageParam.CreateStoreParam.CurrencySymbol,
                     };
 
                     _context.Stores.Add(newTem);

@@ -1,4 +1,5 @@
 using System;
+using Application.Page;
 using Application.Store;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,13 +8,19 @@ namespace Api.Controllers
     public class StoreController : BaseApiController
     {
         [HttpPost("Create")]
-        public async Task<IActionResult> CreateStore(CreateStoreParam param)
+        public async Task<IActionResult> CreateStore(CreateHompageParam param)
         {
-            return HandleResult(
-                await Mediator.Send(
-                    new Application.Store.Create.Command { CreateStoreParam = param }
-                )
-            );
+           StoreDto store = (await Mediator.Send(
+                    new Application.Store.Create.Command { CreateHomePageParam = param }
+                )).Value;
+
+            param.CreatePageParam.StoreId = store.StoreId;
+
+            PageDto page = (await Mediator.Send(
+                    new Application.Page.Create.Command { CreatePageParam = param.CreatePageParam }
+                )).Value;
+
+            return Ok(new CreateHomePageDto{HomePage = page, Store = store});
         }
 
         [HttpGet("GetStore")]
