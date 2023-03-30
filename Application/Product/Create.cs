@@ -7,12 +7,12 @@ namespace Application.Product
 {
     public class Create
     {
-        public class Command : IRequest<Result<Unit>>
+        public class Command : IRequest<Result<ProductDto>>
         {
             public ProductCreateParam ProductCreateParam { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<Unit>>
+        public class Handler : IRequestHandler<Command, Result<ProductDto>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -23,20 +23,22 @@ namespace Application.Product
                 _mapper = mapper;
             }
 
-            public async Task<Result<Unit>> Handle(
+            public async Task<Result<ProductDto>> Handle(
                 Command request,
                 CancellationToken cancellationToken
             )
             {
                 var product = _mapper.Map<Domain.Product>(request.ProductCreateParam);
 
-                _context.Products.Add(product);
+                 _context.Products.Add(product);
 
                 var success = await _context.SaveChangesAsync() > 0;
 
+                var ProductToReturn = _mapper.Map<ProductDto>(product);
                 if (success)
-                    return Result<Unit>.Success(new Unit());
-                return Result<Unit>.Failure("Product addition failed");
+                    return Result<ProductDto>.Success(ProductToReturn);
+
+                return Result<ProductDto>.Failure("Product addition failed");
             }
         }
     }
