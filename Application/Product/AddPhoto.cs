@@ -11,13 +11,13 @@ namespace Application.Product
 {
     public class AddPhoto
     {
-        public class Command : IRequest<Result<PhotoUploadResult>>
+        public class Command : IRequest<Result<ProductDto>>
         {
             public IFormFile ProductPhoto { get; set; }
             public Guid ProductId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<PhotoUploadResult>>
+        public class Handler : IRequestHandler<Command, Result<ProductDto>>
         {
             private readonly AppDataContext _context;
             private readonly IPhotoAccessor _photoAccessor;
@@ -30,7 +30,7 @@ namespace Application.Product
                 _photoAccessor = photoAccessor;
             }
 
-            public async Task<Result<PhotoUploadResult>> Handle(
+            public async Task<Result<ProductDto>> Handle(
                 Command request,
                 CancellationToken cancellationToken
             )
@@ -38,7 +38,7 @@ namespace Application.Product
                 var product = _context.Products.Find(request.ProductId);
 
                 if (product == null)
-                    return Result<PhotoUploadResult>.Failure("Product does not exist");
+                    return Result<ProductDto>.Failure("Product does not exist");
 
                 try
                 {
@@ -55,18 +55,18 @@ namespace Application.Product
 
                     var success = await _context.SaveChangesAsync() > 0;
 
+                    var prod = _mapper.Map<ProductDto>(product);
+
                     if (success)
                     {
-                        var uploadResult = _mapper.Map<PhotoUploadResult>(productPhoto);
-
-                        return Result<PhotoUploadResult>.Success(uploadResult);
+                        return Result<ProductDto>.Success(prod);
                     }
 
-                    return Result<PhotoUploadResult>.Failure("Productphoto upload failed");
+                    return Result<ProductDto>.Failure("Productphoto upload failed");
                 }
                 catch (Exception ex)
                 {
-                    return Result<PhotoUploadResult>.Failure(ex.Message);
+                    return Result<ProductDto>.Failure(ex.Message);
                 }
             }
         }

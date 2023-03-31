@@ -30,12 +30,11 @@ namespace Application.Orders
             )
             {
                 var customer = _context.Customers.Any(c => c.Id == request.CustomerId);
-                if (!customer)
-                    return Result<OrderDto>.Failure("Customer does not exist");
+                  if (!customer)
+                     return Result<OrderDto>.Failure("Customer does not exist");
 
                 var cartt = await _context.Orders
                     .Include(o => o.Purchases)
-                    .AsNoTracking()
                     .Include(o => o.Customer)
                     .Where(
                         o =>
@@ -47,7 +46,7 @@ namespace Application.Orders
                 var cart = _mapper.Map<OrderDto>(cartt);
 
                 if (cart == null)
-                    return Result<OrderDto>.Failure("Customer does not exist");
+                    return Result<OrderDto>.Failure("Customer has no recent purchase");
 
                 return Result<OrderDto>.Success(cart);
             }

@@ -20,6 +20,7 @@ namespace Application.Core
             CreateMap<Domain.Product, ProductCreateParam>();
             CreateMap<ProductCreateParam, Domain.Product>();
             CreateMap<Domain.Product, ProductDto>()
+                .ForMember(pd => pd.Photos, opt => opt.MapFrom(p => p.ProductPhotos.Select(p => new {p.Id, p.Url})))
                 .ForMember(pd => pd.StoreName, opt => opt.MapFrom(p => p.Store.StoreName));
             
             CreateMap<Domain.Store, StoreDto>();

@@ -132,7 +132,9 @@ public class AppDataContext: DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("role");
 
-            entity.HasDiscriminator(e => e.Role);
+            entity.HasDiscriminator(e => e.Role)
+                .HasValue<Customer>("customer")
+                .HasValue<Merchant>("business");
         });
 
         modelBuilder.Entity<Merchant>(entity =>
