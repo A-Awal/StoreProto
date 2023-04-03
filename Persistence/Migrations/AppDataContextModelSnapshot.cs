@@ -22,6 +22,22 @@ namespace Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Charge", b =>
+                {
+                    b.Property<string>("ChargeId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ChargeId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Charges");
+                });
+
             modelBuilder.Entity("Domain.CreditCardDetail", b =>
                 {
                     b.Property<Guid>("StoreId")
@@ -30,19 +46,10 @@ namespace Persistence.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Cvc")
+                    b.Property<string>("Method")
                         .HasColumnType("text");
 
-                    b.Property<string>("ExpiryMonth")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ExpiryYear")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Number")
+                    b.Property<string>("StripeId")
                         .HasColumnType("text");
 
                     b.HasKey("StoreId", "CustomerId");
@@ -54,32 +61,51 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.CustomerReview", b =>
                 {
-                    b.Property<Guid>("ReviewId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("DateCommented")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
 
-                    b.HasKey("ReviewId");
+                    b.HasKey("ProductId", "CustomerId");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("ProductId");
-
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Domain.Discount", b =>
+                {
+                    b.Property<Guid>("DiscountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("DiscountId");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("Domain.Order", b =>
@@ -94,14 +120,12 @@ namespace Persistence.Migrations
                     b.Property<DateTime>("DateOrdered")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("OrderState")
-                        .HasColumnType("integer");
+                    b.Property<string>("OrderState")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("ShippindDetailsId")
+                    b.Property<Guid>("ShippingDetailsId")
                         .HasColumnType("uuid");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("numeric");
 
                     b.HasKey("OrderId");
 
@@ -182,7 +206,7 @@ namespace Persistence.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -193,7 +217,7 @@ namespace Persistence.Migrations
 
                     b.ToTable("Photos");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Photo");
+                    b.HasDiscriminator<string>("CategoryName").HasValue("Photo");
 
                     b.UseTphMappingStrategy();
                 });
@@ -202,6 +226,9 @@ namespace Persistence.Migrations
                 {
                     b.Property<Guid>("ProductId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DiscountId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("ProductCategory")
@@ -240,19 +267,19 @@ namespace Persistence.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("DatePurchased")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("PurchaseState")
-                        .HasColumnType("integer");
+                    b.Property<DateTime>("DatePurchased")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("QuantityPurchased")
                         .HasColumnType("integer");
 
-                    b.HasKey("OrderId", "DatePurchased");
+                    b.HasKey("OrderId", "ProductId");
 
                     b.HasIndex("ProductId");
 
@@ -264,18 +291,21 @@ namespace Persistence.Migrations
                     b.Property<Guid>("MerchantId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ReviewId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DateReplied")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Reply")
                         .HasColumnType("text");
 
-                    b.HasKey("MerchantId", "ReviewId");
+                    b.HasKey("MerchantId");
 
-                    b.HasIndex("ReviewId")
+                    b.HasIndex("CustomerId", "ProductId")
                         .IsUnique();
 
                     b.ToTable("ReviewReplies");
@@ -328,68 +358,6 @@ namespace Persistence.Migrations
                     b.HasIndex("MerchantId");
 
                     b.ToTable("Stores");
-                });
-
-            modelBuilder.Entity("Domain.Template", b =>
-                {
-                    b.Property<Guid>("TemplateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FacebookLink")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FooterText")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Heading")
-                        .HasColumnType("text");
-
-                    b.Property<string>("HeroImage")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InstagramLink")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Logo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MainColor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MainHeaderTextSize")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StoreName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubColor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubHeaderTextsize")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubHeading")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TemplateCategory")
-                        .HasColumnType("text");
-
-                    b.Property<int>("TemplateNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TwitterLink")
-                        .HasColumnType("text");
-
-                    b.HasKey("TemplateId");
-
-                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("Domain.Token", b =>
@@ -505,18 +473,6 @@ namespace Persistence.Migrations
                     b.HasDiscriminator().HasValue("ProductPhoto");
                 });
 
-            modelBuilder.Entity("Domain.TemplatePhoto", b =>
-                {
-                    b.HasBaseType("Domain.Photo");
-
-                    b.Property<Guid>("TemplateId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("TemplateId");
-
-                    b.HasDiscriminator().HasValue("TemplatePhoto");
-                });
-
             modelBuilder.Entity("Domain.Customer", b =>
                 {
                     b.HasBaseType("Domain.User");
@@ -525,7 +481,7 @@ namespace Persistence.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("orderId");
 
-                    b.HasDiscriminator().HasValue("Customer");
+                    b.HasDiscriminator().HasValue("customer");
                 });
 
             modelBuilder.Entity("Domain.Merchant", b =>
@@ -536,19 +492,30 @@ namespace Persistence.Migrations
                         .HasColumnType("character varying")
                         .HasColumnName("business_name");
 
-                    b.HasDiscriminator().HasValue("Merchant");
+                    b.HasDiscriminator().HasValue("business");
+                });
+
+            modelBuilder.Entity("Domain.Charge", b =>
+                {
+                    b.HasOne("Domain.Order", "Order")
+                        .WithOne("Charge")
+                        .HasForeignKey("Domain.Charge", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Domain.CreditCardDetail", b =>
                 {
                     b.HasOne("Domain.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("CreditCardDetails")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Store", "Store")
-                        .WithMany()
+                        .WithMany("CreditCards")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -575,6 +542,17 @@ namespace Persistence.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Domain.Discount", b =>
+                {
+                    b.HasOne("Domain.Store", "Store")
+                        .WithMany("Discounts")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Domain.Order", b =>
@@ -639,7 +617,7 @@ namespace Persistence.Migrations
 
                     b.HasOne("Domain.CustomerReview", "Review")
                         .WithOne("ReviewReply")
-                        .HasForeignKey("Domain.ReviewReply", "ReviewId")
+                        .HasForeignKey("Domain.ReviewReply", "CustomerId", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -656,15 +634,15 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Store", "store")
-                        .WithMany("shipingDetails")
+                    b.HasOne("Domain.Store", "Store")
+                        .WithMany("ShipingDetails")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
-                    b.Navigation("store");
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Domain.Store", b =>
@@ -700,17 +678,6 @@ namespace Persistence.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Domain.TemplatePhoto", b =>
-                {
-                    b.HasOne("Domain.Template", "Template")
-                        .WithMany("TemplatePhotos")
-                        .HasForeignKey("TemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Template");
-                });
-
             modelBuilder.Entity("Domain.CustomerReview", b =>
                 {
                     b.Navigation("ReviewReply");
@@ -718,6 +685,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Order", b =>
                 {
+                    b.Navigation("Charge");
+
                     b.Navigation("Purchases");
                 });
 
@@ -737,20 +706,21 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Store", b =>
                 {
+                    b.Navigation("CreditCards");
+
+                    b.Navigation("Discounts");
+
                     b.Navigation("Inventory");
 
                     b.Navigation("Pages");
 
-                    b.Navigation("shipingDetails");
-                });
-
-            modelBuilder.Entity("Domain.Template", b =>
-                {
-                    b.Navigation("TemplatePhotos");
+                    b.Navigation("ShipingDetails");
                 });
 
             modelBuilder.Entity("Domain.Customer", b =>
                 {
+                    b.Navigation("CreditCardDetails");
+
                     b.Navigation("Orders");
 
                     b.Navigation("ProductReviews");

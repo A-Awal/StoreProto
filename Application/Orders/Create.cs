@@ -26,7 +26,7 @@ namespace Application.Orders
             )
             {
                 var customer = _context.Customers.Find(request.OrderCreateParam.CustomerId);
-
+                
                 if (customer == null)
                     return Result<Guid>.Failure("Customer does not exist");
 
@@ -46,19 +46,11 @@ namespace Application.Orders
 
                     _context.Orders.Add(newOrder);
 
-                    var success = await _context.SaveChangesAsync() > 0;
+                    var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
                     if (success)
                     {
-                        Guid orderId = _context.Orders
-                            .FirstOrDefault(
-                                o =>
-                                    o.CustomerId == request.OrderCreateParam.CustomerId
-                                    && o.OrderState == Domain.OrderStates.processing
-                            )
-                            .OrderId;
-
-                        return Result<Guid>.Success(orderId);
+                        return Result<Guid>.Success(newOrder.OrderId);
                     }
 
                     return Result<Guid>.Failure("Placing order failed");

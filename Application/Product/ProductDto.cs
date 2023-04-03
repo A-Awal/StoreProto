@@ -4,6 +4,6 @@ namespace Application.Product
     {
         public Guid ProductId { get; set; }
         public string StoreName { get; set; }
-        public List<Object> Photos {get; set;}
+        
     }
 }

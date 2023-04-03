@@ -1,4 +1,3 @@
-using Api.Controllers;
 using Application.Product;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +14,9 @@ namespace API.Controllers
         }
 
         [HttpGet("Search")]
-        public async Task<IActionResult> GetProduct()
+        public async Task<IActionResult> GetProduct(Guid storeId)
         {
-            return HandleResult(await _mediator.Send(new Products.Query { }));
+            return HandleResult(await _mediator.Send(new Products.Query {StoreId = storeId }));
         }
 
         [HttpPost("Create")]

@@ -8,7 +8,7 @@ namespace Application.Product
         public string UnitOfMeasurement { get; set; }
         public int Quantity { get; set; }
         public bool Publish { get; set; }
-        public decimal UnitPrice { get; set; }
+		public decimal UnitPrice { get; set; }
 
-    }
+	}
 }

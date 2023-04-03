@@ -1,19 +1,20 @@
 using Application.Core;
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Purchases
 {
 	public class Create
     {
-        public class Command : IRequest<Result<PurchaseDto>>
+        public class Command : IRequest<Result<Unit>>
         {
             public PurchaseCreateParam PurchaseCreateParam { get; set; }
             public Guid OrderId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<PurchaseDto>>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,49 +25,45 @@ namespace Application.Purchases
                 _context = context;
             }
 
-            public async Task<Result<PurchaseDto>> Handle(
+            public async Task<Result<Unit>> Handle(
                 Command request,
                 CancellationToken cancellationToken
             )
             {
-                var productToOrder = await _context.Products.FindAsync(
+                var productToOrder = _context.Products.Find(
                     request.PurchaseCreateParam.ProductId
                 );
 
                 if (productToOrder == null || productToOrder.Quantity < request.PurchaseCreateParam.QuantityPurchased)
                 {
-                    return Result<PurchaseDto>.Failure("Please we are out of stock");
+                    return Result<Unit>.Failure("Please we are out of stock");
                 }
 
                 try
                 {
-                    var orderToUpdate = _context.Orders.Find(request.OrderId);
+                    var orderToUpdate = _context.Orders
+						.Include(o => o.Purchases)
+						.First(o => o.OrderId == request.OrderId);
 
                     if (orderToUpdate == null)
-                        return Result<PurchaseDto>.Failure("Cart does not exist");
-
-                    orderToUpdate.TotalAmount =
-                        orderToUpdate.TotalAmount
-                        + productToOrder.UnitPrice * request.PurchaseCreateParam.QuantityPurchased;
-                    _context.Orders.Update(orderToUpdate);
+                        return Result<Unit>.Failure("Cart does not exist");
 
                     var newpurchase = _mapper.Map<Domain.Purchase>(request.PurchaseCreateParam);
+					newpurchase.Discount = 0;
 
-                    newpurchase.OrderId = request.OrderId;
+					orderToUpdate.Purchases.Add(newpurchase);
+					_context.Orders.Update(orderToUpdate);
 
-                    _context.Add(newpurchase);
-                    var success = await _context.SaveChangesAsync() > 0;
-
-                    var purchaseDto = _mapper.Map<PurchaseDto>(newpurchase);
-
+                    var success = await _context.SaveChangesAsync(cancellationToken) > 0;
+		
                     if (success)
-                        return Result<PurchaseDto>.Success(purchaseDto);
+                        return Result<Unit>.Success(new Unit());
 
-                    return Result<PurchaseDto>.Failure("Purchase failed");
+                    return Result<Unit>.Failure("Purchase failed");
                 }
                 catch (Exception ex)
                 {
-                    return Result<PurchaseDto>.Failure(ex.Message);
+                    return Result<Unit>.Failure(ex.Message);
                 }
             }
         }

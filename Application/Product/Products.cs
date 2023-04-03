@@ -8,7 +8,10 @@ namespace Application.Product
 {
     public class Products
     {
-        public class Query : IRequest<Result<List<ProductDto>>> { }
+        public class Query : IRequest<Result<List<ProductDto>>>
+        { 
+            public Guid StoreId {get; set;}
+        }
 
         public class Handler : IRequestHandler<Query, Result<List<ProductDto>>>
         {
@@ -27,6 +30,7 @@ namespace Application.Product
             )
             {
                 List<ProductDto> products = await _dataContext.Products
+                    .Where(p => p.StoreId == request.StoreId)
                     .Select(p => _mapper.Map<ProductDto>(p))
                     .ToListAsync();
 

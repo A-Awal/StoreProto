@@ -1,7 +1,3 @@
-using System;
-using System.Net.Http;
-using System.Net;
-using System.Net.Cache;
 using Application.Core;
 using AutoMapper;
 using MediatR;
@@ -37,12 +33,12 @@ namespace Application.Store
 				var store = _context.Stores.Include(s => s.Pages).AsQueryable();
 
 
-                if (store != null)
-                {
-                    if(request.MerchantId != Guid.Empty)
-                        store = store.Where(s => s.MerchantId == request.MerchantId);
+				if (store != null)
+				{
+					if (request.MerchantId != Guid.Empty)
+						store = store.Where(s => s.MerchantId == request.MerchantId);
 
-					if(request.StoreId != Guid.Empty)
+					if (request.StoreId != Guid.Empty)
 					{
 						store = store.Where(s => s.StoreId == request.StoreId);
 					}
@@ -50,10 +46,10 @@ namespace Application.Store
 					var storeDto = _mapper.Map<List<GetStoreDto>>(store);
 
 					return Result<List<GetStoreDto>>.Success(storeDto);
-                }
+				}
 
-                return Result<List<GetStoreDto>>.Failure("Store does not exist");
-            }
-        }
+				return Result<List<GetStoreDto>>.Failure("Store does not exist");
+			}
+		}
     }
 }

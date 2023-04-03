@@ -1,95 +1,111 @@
-using System;
 using Application.Orders;
-using Application.Purchases;
 using Application.Stripe;
+using Application.Stripe.Charge;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace API.Controllers
 {
-    public class CustomerController : BaseApiController
+	public class StripeController : BaseApiController
     {
-        [HttpPost("purchase")]
-        public async Task<IActionResult> PuchaseAProduct(PurchaseCreateParam purchaseCreateParam)
-        {
-            var result = await Mediator.Send(
-                new Application.Orders.Create.Command
-                {
-                    OrderCreateParam = new OrderCreateParam(purchaseCreateParam.CustomerId)
-                }
-            );
-
-            if (!result.IsSuccess)
-                return HandleResult(result);
-
-            return HandleResult(
-                await Mediator.Send(
-                    new Application.Purchases.Create.Command
-                    {
-                        PurchaseCreateParam = purchaseCreateParam,
-                        OrderId = result.Value
-                    }
-                )
-            );
-        }
-
-        [HttpGet("Cart")]
-        public async Task<IActionResult> Cart(Guid customerId)
-        {
-            return HandleResult(
-                await Mediator.Send(new Application.Orders.Cart.Query { CustomerId = customerId })
-            );
-        }
-
-        [HttpPost("SubmitStripeDetails")]
-        public async Task<IActionResult> SubmitStripeDetails(
-            CreateCustomerParam createCustomerParam,
-            Guid DbCustomerId
+        [HttpPost("CreateCardCustomer")]
+        public async Task<IActionResult> SubmitCardDetails(
+			 Application.Stripe.Card.CreateCardCustomerParam createCustomerParam
         )
         {
-            var resource = await Mediator.Send(
-                new CreateCustomer.Query { CreateCustomerParam = createCustomerParam }
-            );
-            if (!resource.IsSuccess)
-                return Problem(resource.Error);
+			return HandleResult(
+				await Mediator.Send(
+						new Application.Stripe.Card.CreateCardCustomer.Command
+						{
+							CreateCardCustomerParam = createCustomerParam
+						}
+					)
+				);
 
-            CustomerResource customerResource = resource.Value;
-
-            var cart = await Mediator.Send(new Cart.Query { CustomerId = DbCustomerId });
-            decimal amount = cart.Value.TotalAmount;
-
-            if (!cart.IsSuccess)
-                return Problem(cart.Error);
-
-            ConfirmationInfo confirmationInfo = new ConfirmationInfo();
-            confirmationInfo.CustomerResource = customerResource;
-            confirmationInfo.Amount = (long)amount;
-
-            return Ok(confirmationInfo);
         }
 
-        [HttpGet("getCard")]
-        public async Task<IActionResult> GetCardDetails(CreateCustomerParam createCustomerParam)
+		[HttpPost("CreateBankCustomer")]
+		public async Task<IActionResult> SubmitBankDetails(
+			Application.Stripe.Bank.CreateBankCustomerParam createBankParam
+		)
+		{
+			return HandleResult(
+				await Mediator.Send(
+						new Application.Stripe.Bank.CreateBankCustomer.Command
+						{
+							CreateBankCustomerParam = createBankParam
+						}
+					)
+				);
+		}
+
+		[HttpGet("getdetail")]
+        public async Task<IActionResult> ChargeCustomer(
+			Guid customerId
+			)
         {
             return HandleResult(
                 await Mediator.Send(
-                    new GetCardDetails.Query { CreateCustomerParam = createCustomerParam }
+                    new GetCardDetails.Query
+					{
+						CustomerId = customerId,
+					}
                 )
             );
         }
 
         [HttpPost("Pay")]
-        public async Task<IActionResult> Pay(CreateChargeParam chargeParam, Guid DbCustomerId)
+        public async Task<IActionResult> Pay
+			(
+				CreateChargeParamDto chargeParamDto,
+				Guid customerId,
+				string method ="card"
+			)
         {
-            var processPurchase = await Mediator.Send(
-                new PrepareForPayment.Command { CustomerId = DbCustomerId }
-            );
 
-            if (!processPurchase.IsSuccess)
-                return Problem(processPurchase.Error);
+			var cart = await Mediator.Send(
+				new Cart.Query { CustomerId = customerId, Cart = true });
 
-            return HandleResult(
-                await Mediator.Send(new ChargeCustomer.Query() { CreateChargeParam = chargeParam })
-            );
-        }
+			if (!cart.IsSuccess)
+				return HandleResult(cart);
+
+			var amount = await Mediator.Send(
+							new CalculateTotlas.Query { OrderDto = cart.Value }
+							);
+
+			if (!amount.IsSuccess )
+				return  HandleResult(amount);
+
+			if (amount.Value.First().AmountDue != chargeParamDto.Amount)
+				return Problem(
+					string.Format("{0} and {1} are not equaul", chargeParamDto.Amount, amount.Value.First().AmountDue)
+					);
+
+			var payment = await Mediator.Send(
+					new ChargeCustomer.Command
+					{
+						CreateChargeParamDto = chargeParamDto,
+						CustomerId = customerId,
+						Method = method
+					}
+				);
+         
+			if(!payment.IsSuccess)
+				return HandleResult(payment);
+
+			var processPurchase = await Mediator.Send(
+				new AfterPaymentProcess.Command
+				{
+					CustomerId = customerId
+				}
+			);
+
+			if (!processPurchase.IsSuccess)
+				return HandleResult(processPurchase);
+
+			return HandleResult(payment);
+		}
+
+		
+		
     }
 }

@@ -1,3 +1,4 @@
+using Application.DiscountAndPromotions;
 using Application.Orders;
 using Application.Page;
 using Application.Photos;
@@ -5,8 +6,6 @@ using Application.Product;
 using Application.Purchases;
 using Application.Shipping;
 using Application.Store;
-using Application.Stripe;
-using Application.Template;
 using AutoMapper;
 using Domain;
 
@@ -17,30 +16,16 @@ namespace Application.Core
         public AutoMapperProfile()
         {
             CreateMap<ProductDto, Domain.Product>();
-            CreateMap<Domain.Product, ProductCreateParam>();
-            CreateMap<ProductCreateParam, Domain.Product>();
-            CreateMap<Domain.Product, ProductDto>()
-                .ForMember(pd => pd.Photos, opt => opt.MapFrom(p => p.ProductPhotos.Select(p => new {p.Id, p.Url})))
+            CreateMap<Domain.Product, ProductCreateParam>().ReverseMap();
+			CreateMap<Domain.Product, ProductDetail>()
+				.ForMember(pd => pd.Purchases, opt => opt.MapFrom(p => p.ProductPhotos.Select(pp => new { pp.Url })));
+
+			CreateMap<Domain.Product, ProductDto>()
                 .ForMember(pd => pd.StoreName, opt => opt.MapFrom(p => p.Store.StoreName));
             
             CreateMap<Domain.Store, StoreDto>();
-            CreateMap<Domain.Store, GetStoreDto>()
-                .ForMember(sd => sd.pages, opt => opt.MapFrom(s => s.Pages));
-
-            CreateMap<Domain.Template, TemplateDto>()
-                .ForMember(td => td.HeroImage, opt => 
-                    opt.MapFrom(t => t.TemplatePhotos.Any()? t.TemplatePhotos.First(tp => tp.Id == t.HeroImage).Url:""))
-                    
-                .ForMember(td => td.Logo, opt => 
-                    opt.MapFrom(t => t.TemplatePhotos.Any()? t.TemplatePhotos.First(tp => tp.Id == t.Logo).Url:""));
-                
-            CreateMap<TemplateDto, Domain.Template>();
-            CreateMap<TemplateUpdateParam, Domain.Template>();
-            
-            CreateMap<TemplateCreateParam, Domain.Template>();
-
-            CreateMap<Domain.TemplatePhoto, PhotoUploadResult>()
-                .ForMember(p => p.PublicId, opt => opt.MapFrom(t => t.Id));
+			CreateMap<Domain.Store, GetStoreDto>()
+				.ForMember(sd => sd.Pages, opt => opt.MapFrom(s => s.Pages));
 
             CreateMap<Domain.Page, PageDto>()
                 .ForMember(td => td.HeroImage, opt => 
@@ -54,25 +39,40 @@ namespace Application.Core
 
             CreateMap<CreatePageParam, Domain.Page>();
 
-            CreateMap<Domain.Purchase, PurchaseCreateParam>();
-            CreateMap<PurchaseCreateParam, Domain.Purchase>();
-            CreateMap<Domain.Purchase, PurchaseDto>()
+            CreateMap<Purchase, PurchaseCreateParam>().ReverseMap();
+            CreateMap<Purchase, PurchaseDto>()
                 .ForMember(pd => pd.Product, opt => opt.MapFrom(p => p.Product.ProductName))
-                .ForMember(pd => pd.Order, opt => opt.MapFrom(p => p.Order.OrderId));
+                .ForMember(pd => pd.PurchaseState, opt => opt.MapFrom(p => p.Order.OrderState))
+                .ForMember(pd => pd.DiscountAmount, opt => opt.MapFrom(p => (p.Product.UnitPrice*p.QuantityPurchased)*(p.Discount/100)))
+                .ForMember(pd => pd.AmountDue, opt => opt.MapFrom(p => (p.Product.UnitPrice*p.QuantityPurchased)*((100-p.Discount)/100)))
+                .ForMember(pd => pd.Order, opt => opt.MapFrom(p => p.Order.OrderId))
+				.ForMember(pd => pd.UnitOfMeasurement, opt => opt.MapFrom(p => p.Product.UnitOfMeasurement))
+                .ForMember(pd => pd.CustomerId, opt => opt.MapFrom(p => p.Order.CustomerId));
 
-            CreateMap<Domain.Order, OrderDto>()
-                .ForMember(od => od.Purchases, opt => opt.MapFrom(o => o.Purchases.Select(p => new {p.PurchaseState, p.DatePurchased, p.QuantityPurchased})))
-                .ForMember(od => od.Customer, opt => opt.MapFrom(o => o.Customer.FirstName));
+			CreateMap<Order, OrderDto>()
+				.ForMember(od => od.Purchases, opt => opt.MapFrom(o => o.Purchases))
+				.ForMember(od => od.TotalAmount, opt =>
+					opt.MapFrom(o =>
+						o.Purchases.Aggregate(
+							(decimal)0, (purchase, next) =>
+									purchase + (next.QuantityPurchased * next.Product.UnitPrice)
+									)
+						)
+					)
+				.ForMember(od => od.Customer, opt => opt.MapFrom(o => o.Customer.FirstName));
 
-            CreateMap<CreateCustomerParam, CreditCardDetail>()
-                .ForMember(cc => cc.ExpiryMonth, opt => opt.MapFrom(c => c.Card.Cvc))
-                .ForMember(cc => cc.ExpiryMonth, opt => opt.MapFrom(c => c.Card.Cvc))
-                .ForMember(cc => cc.ExpiryMonth, opt => opt.MapFrom(c => c.Card.Cvc));
-            CreateMap<ShippingDetails, ShippingParam>();
-            CreateMap<ShippingParam, ShippingDetails>();
+
+			//CreateMap<CreateCustomerParam, CreditCardDetail>()
+   //             .ForMember(cc => cc.ExpiryMonth, opt => opt.MapFrom(c => c.Card.ExpiryMonth))
+   //             .ForMember(cc => cc.ExpiryYear, opt => opt.MapFrom(c => c.Card.ExpiryYear))
+   //             .ForMember(cc => cc.Cvc, opt => opt.MapFrom(c => c.Card.Cvc));
+
+            CreateMap<ShippingDetails, ShippingParam>().ReverseMap();
             CreateMap<ShippingDetails, ShippingDto>();
-            
 
+			CreateMap<CreateParam, Discount>();
+			CreateMap<Discount, DiscountDto>()
+				.ForMember(dd => dd.Expires, opt => opt.MapFrom(d => d.Expires.ToShortDateString()));
         }   
 
        

@@ -9,12 +9,12 @@ namespace Application.Shipping
 {
     public class Create
     {
-        public class Command : IRequest<Result<Unit>>
+        public class Command : IRequest<Result<ShippingDto>>
         {
             public ShippingParam ShippingParam { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<Unit>>
+        public class Handler : IRequestHandler<Command, Result<ShippingDto>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -25,21 +25,23 @@ namespace Application.Shipping
                 _mapper = mapper;
             }
 
-            public async Task<Result<Unit>> Handle(
+            public async Task<Result<ShippingDto>> Handle(
                 Command request,
                 CancellationToken cancellationToken
             )
             {
-                var newshippingDetail = _mapper.Map<Domain.ShippingDetails>(request.ShippingParam);
+                var newshippingDetail = _mapper.Map<ShippingDetails>(request.ShippingParam);
 
                 _context.ShipingDetails.Add(newshippingDetail);
 
-                var success = await _context.SaveChangesAsync() > 0;
+                var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (!success)
-                    return Result<Unit>.Failure("Unable to add new shippingDetails");
+                    return Result<ShippingDto>.Failure("Unable to add new shippingDetails");
 
-                return Result<Unit>.Success(new MediatR.Unit());
+				var shipping = _mapper.Map<ShippingDto>(newshippingDetail);
+
+                return Result<ShippingDto>.Success(shipping);
             }
         }
     }

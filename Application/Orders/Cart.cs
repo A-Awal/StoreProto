@@ -8,12 +8,13 @@ namespace Application.Orders
 {
     public class Cart
     {
-        public class Query : IRequest<Result<OrderDto>>
+        public class Query : IRequest<Result<List<OrderDto>>>
         {
             public Guid CustomerId { get; set; }
+			public bool Cart { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<OrderDto>>
+        public class Handler : IRequestHandler<Query, Result<List<OrderDto>>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,31 +25,34 @@ namespace Application.Orders
                 _mapper = mapper;
             }
 
-            public async Task<Result<OrderDto>> Handle(
-                Query request,
+			public async Task<Result<List<OrderDto>>> Handle(
+				Query request,
                 CancellationToken cancellationToken
             )
             {
                 var customer = _context.Customers.Any(c => c.Id == request.CustomerId);
-                  if (!customer)
-                     return Result<OrderDto>.Failure("Customer does not exist");
 
-                var cartt = await _context.Orders
-                    .Include(o => o.Purchases)
-                    .Include(o => o.Customer)
-                    .Where(
-                        o =>
-                            o.CustomerId == request.CustomerId
-                            && o.OrderState == Domain.OrderStates.processing
-                    )
-                    .FirstOrDefaultAsync();
+                if (!customer)
+                    return Result<List<OrderDto>>.Failure("Customer does not exist");
 
-                var cart = _mapper.Map<OrderDto>(cartt);
+				var cartt = _context.Orders
+					.Include(o => o.Customer)
+					.Include(o => o.Purchases)
+						.ThenInclude(p => p.Product)
+					.Where(o =>o.CustomerId == request.CustomerId)
+					.AsQueryable();
+
+				if(request.Cart)
+					cartt = cartt.Where(o =>
+						o.OrderState == Domain.OrderStates.processing
+					);
+
+                var cart = _mapper.Map<List<OrderDto>>(cartt);
 
                 if (cart == null)
-                    return Result<OrderDto>.Failure("Customer has no recent purchase");
+                    return Result<List<OrderDto>>.Failure("Customer Cart is Empty");
 
-                return Result<OrderDto>.Success(cart);
+                return Result<List<OrderDto>>.Success(cart);
             }
         }
     }

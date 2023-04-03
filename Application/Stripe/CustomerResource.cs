@@ -2,7 +2,7 @@ namespace Application.Stripe
 {
 	public record CustomerResource
     (
-    string CustomerId, 
+    string CustomerStripeId, 
     string Email, 
     string Name
     );

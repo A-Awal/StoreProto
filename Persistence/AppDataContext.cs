@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Domain;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Persistence;
 public class AppDataContext: DbContext
@@ -17,16 +18,16 @@ public class AppDataContext: DbContext
     public DbSet<ReviewReply> ReviewReplies { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Page> Pages { get; set; }
-    public DbSet<Template> Templates { get; set; }
     public DbSet<ShippingDetails> ShipingDetails { get; set; }
     public DbSet<CreditCardDetail> CreditCardDetails { get; set; }
     public DbSet<Photo> Photos { get; set; }
     public DbSet<ProductPhoto> ProductPhotos { get; set; }
     public DbSet<PagePhoto> PagePhotos { get; set; }
-    public DbSet<TemplatePhoto> TemplatePhotos { get; set; }
+	public DbSet<Discount> Discounts { get; set; }
+	public DbSet<Charge> Charges { get; set; }
 
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+	protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         
@@ -36,11 +37,11 @@ public class AppDataContext: DbContext
         {
             s.HasKey(s => s.StoreId);
 
-            s.HasOne<Merchant>(s => s.Merchant)
+            s.HasOne(s => s.Merchant)
             .WithMany(m => m.Stores)
             .HasForeignKey(s => s.MerchantId);
 
-            s.HasMany<Product>(s => s.Inventory)
+            s.HasMany(s => s.Inventory)
             .WithOne(p => p.Store)
             .HasForeignKey(p => p.StoreId);
 
@@ -50,24 +51,29 @@ public class AppDataContext: DbContext
         modelBuilder.Entity<Purchase>( 
             entity =>
             {
-            entity.HasKey(d => new { d.OrderId, d.DatePurchased });
+            entity.HasKey(d => new { d.OrderId, d.ProductId });
 
-            entity.HasOne<Product>(d => d.Product)
+            entity.HasOne(d => d.Product)
             .WithMany(p => p.Purchases)
             .HasForeignKey(o => o.ProductId);
-
-            }
+			}
         );
 
-        modelBuilder.Entity<CustomerReview>(
-            entity => {
-                entity.HasKey(r => r.ReviewId);
+		modelBuilder
+		.Entity<Order>()
+		.Property(d => d.OrderState)
+		.HasConversion(new EnumToStringConverter<OrderStates>());
 
-                entity.HasOne<Product>(r => r.Product)
+		modelBuilder.Entity<CustomerReview>(
+			entity =>
+			{
+                entity.HasKey(r => new { r.ProductId, r.CustomerId});
+
+                entity.HasOne(r => r.Product)
                 .WithMany(p => p.Reviews)
                 .HasForeignKey(r => r.ProductId);
 
-                entity.HasOne<Customer>(r => r.Customer)
+                entity.HasOne(r => r.Customer)
                 .WithMany(c => c.ProductReviews)
                 .HasForeignKey(r => r.CustomerId);
             }
@@ -75,22 +81,21 @@ public class AppDataContext: DbContext
 
         modelBuilder.Entity<ReviewReply>(
             entity => {
-                entity.HasKey(rr => new {rr.MerchantId, rr.ReviewId});
+                entity.HasKey(rr => rr.MerchantId);
                 
-                entity.HasOne<Merchant>(rr => rr.Merchant)
+                entity.HasOne(rr => rr.Merchant)
                 .WithMany(r => r.ReviewReplies)
                 .HasForeignKey( rr => rr.MerchantId);
-            }
+
+				entity.HasOne(rr => rr.Review)
+				.WithOne(r => r.ReviewReply)
+				.HasForeignKey<ReviewReply>(rr => new {rr.CustomerId, rr.ProductId});
+			}
         );
 
         modelBuilder.Entity<CreditCardDetail>(entity =>
         {
             entity.HasKey(s => new { s.StoreId, s.CustomerId });
-        });
-
-        modelBuilder.Entity<Template>(entity =>
-        {
-            entity.HasKey(s => s.TemplateId);
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -135,6 +140,7 @@ public class AppDataContext: DbContext
             entity.HasDiscriminator(e => e.Role)
                 .HasValue<Customer>("customer")
                 .HasValue<Merchant>("business");
+            
         });
 
         modelBuilder.Entity<Merchant>(entity =>
@@ -143,13 +149,20 @@ public class AppDataContext: DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("business_name");
             });
+
+		modelBuilder.Entity<Photo>(entity =>
+            {
+				entity.HasDiscriminator(p => p.CategoryName);
+
+			});
+
         modelBuilder.Entity<Customer>(entity =>
             {
                 entity.Property(e => e.OrderId).HasColumnName("orderId");
 
             });
 
-        modelBuilder.Entity<Token>(entity =>
+		modelBuilder.Entity<Token>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_82fae97f905930df5d62a702fc9");
 
@@ -167,8 +180,7 @@ public class AppDataContext: DbContext
                 .HasColumnName("user_id");
         });
 
-
-    }
+	}
 
 
 }

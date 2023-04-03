@@ -14,6 +14,5 @@ public class Product
 	public List<Purchase> Purchases { get; set; }
 	public ICollection<CustomerReview> Reviews { get; set; }
 	public ICollection<ProductPhoto> ProductPhotos { get; set; }
-
-
+	public Guid DiscountId { get; set; }
 }

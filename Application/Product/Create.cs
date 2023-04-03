@@ -30,16 +30,17 @@ namespace Application.Product
             {
                 var product = _mapper.Map<Domain.Product>(request.ProductCreateParam);
 
-                 _context.Products.Add(product);
+                _context.Products.Add(product);
 
-                var success = await _context.SaveChangesAsync() > 0;
+                var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-                var ProductToReturn = _mapper.Map<ProductDto>(product);
-                if (success)
-                    return Result<ProductDto>.Success(ProductToReturn);
+				var ProductToReturn = _mapper.Map<ProductDto>(product);
 
-                return Result<ProductDto>.Failure("Product addition failed");
-            }
+				if (success)
+					return Result<ProductDto>.Success(ProductToReturn);
+
+				return Result<ProductDto>.Failure("Product addition failed");
+			}
         }
     }
 }

@@ -10,7 +10,8 @@ namespace Application.Stripe
     {
         public class Query : IRequest<Result<CustomerResource>>
         {
-            public CreateCustomerParam CreateCustomerParam { get; set; }
+            public Guid CustomerId { get; set; }
+            public Guid StoreId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<CustomerResource>>
@@ -31,11 +32,11 @@ namespace Application.Stripe
                 CancellationToken cancellationToken
             )
             {
-                if (request.CreateCustomerParam.StoreId != Guid.Empty)
+                if (request.StoreId != Guid.Empty)
                 {
                     var individualStoreCardDetail = await _context.CreditCardDetails.FindAsync(
-                        request.CreateCustomerParam.CustomerId,
-                        request.CreateCustomerParam.StoreId
+                        request.CustomerId,
+                        request.StoreId
                     );
 
                     if (individualStoreCardDetail == null)
@@ -49,7 +50,7 @@ namespace Application.Stripe
 
                 // Since we treating merchant card details as one for now
                 var response = _context.CreditCardDetails.First(
-                    c => c.CustomerId == request.CreateCustomerParam.CustomerId
+                    c => c.CustomerId == request.CustomerId
                 );
 
                 if (response == null)

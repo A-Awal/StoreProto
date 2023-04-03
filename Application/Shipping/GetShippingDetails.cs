@@ -1,19 +1,22 @@
 using Application.Core;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Shipping
 {
-    public class Get
+    public class GetShippingDetails
     {
-        public class Query : IRequest<Result<ShippingDto>>
+        public class Query : IRequest<Result<List<ShippingDto>>>
         {
-            public GetParam GetParam { get; set; }
+            public Guid CustomerId { get; set; }
+            public Guid StoreId { get; set; }
+			
         }
 
-        public class Handler : IRequestHandler<Query, Result<ShippingDto>>
+        public class Handler : IRequestHandler<Query, Result<List<ShippingDto>>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,23 +27,27 @@ namespace Application.Shipping
                 _mapper = mapper;
             }
 
-            public async Task<Result<ShippingDto>> Handle(
+            public async Task<Result<List<ShippingDto>>> Handle(
                 Query request,
                 CancellationToken cancellationToken
             )
             {
-                var shippingDetails = await _context.ShipingDetails.FirstOrDefaultAsync(
+                var shippingDetails = _context.ShipingDetails.Where(
                     s =>
-                        s.CustomerId == request.GetParam.CustomerId
-                        && s.StoreId == request.GetParam.StoreId
-                );
+                        s.CustomerId == request.CustomerId
+                )
+					.AsQueryable();
+				if (request.StoreId != Guid.Empty)
+					shippingDetails = shippingDetails.Where(s => s.StoreId == request.StoreId);
 
-                if (shippingDetails == null)
-                    return Result<ShippingDto>.Failure("customer has no details yet");
+				var shippingDetailDto = await shippingDetails
+					.ProjectTo<ShippingDto>(_mapper.ConfigurationProvider)
+					.ToListAsync(cancellationToken);
 
-                var details = _mapper.Map<ShippingDto>(shippingDetails);
+				if (shippingDetailDto == null)
+                    return Result<List<ShippingDto>>.Failure("customer has no details yet");
 
-                return Result<ShippingDto>.Success(details);
+                return Result<List<ShippingDto>>.Success(shippingDetailDto);
             }
         }
     }

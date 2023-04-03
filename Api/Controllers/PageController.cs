@@ -1,7 +1,7 @@
 using Application.Page;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace API.Controllers
 {
     public class PageController : BaseApiController
     {

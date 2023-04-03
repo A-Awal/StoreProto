@@ -11,6 +11,9 @@ namespace Domain
 		public string Currency {get; set;}
 		public string CurrencySymbol {get; set;}
 		public ICollection<Product> Inventory { get; set; }
-		public ICollection<ShippingDetails> shipingDetails { get; set; }
+		public ICollection<ShippingDetails> ShipingDetails { get; set; }
+		public ICollection<Discount> Discounts { get; set; }
+		public ICollection<CreditCardDetail> CreditCards { get; set;}
+
 	}
 }
