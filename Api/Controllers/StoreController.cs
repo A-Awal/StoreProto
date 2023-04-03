@@ -1,3 +1,5 @@
+using System.IO.IsolatedStorage;
+using System;
 using Application.Page;
 using Application.Store;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +27,16 @@ namespace API.Controllers
 		[HttpGet("GetStore")]
 		public async Task<IActionResult> GetStore(Guid merchantId, Guid storeId)
 		{
-			return HandleResult(
-				await Mediator.Send(
+			var storeList =	await Mediator.Send(
 					new GetStore.Query { MerchantId = merchantId, StoreId = storeId }
-				)
-			);
+				);
+			if(!storeList.IsSuccess)
+				return HandleResult(storeList);
+
+			if(storeId != Guid.Empty)
+				return Ok(storeList.Value.First() != null? storeList.Value.First(): storeList.Value);
+
+			return HandleResult(storeList);
 		}
 	}
 }

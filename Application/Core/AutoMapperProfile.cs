@@ -19,6 +19,8 @@ namespace Application.Core
             CreateMap<Domain.Product, ProductCreateParam>().ReverseMap();
 			CreateMap<Domain.Product, ProductDetail>()
 				.ForMember(pd => pd.Purchases, opt => opt.MapFrom(p => p.ProductPhotos.Select(pp => new { pp.Url })));
+                
+            CreateMap<ProductPhoto, PhotoUploadResult>();
 
 			CreateMap<Domain.Product, ProductDto>()
                 .ForMember(pd => pd.StoreName, opt => opt.MapFrom(p => p.Store.StoreName));
