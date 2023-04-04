@@ -31,7 +31,7 @@ namespace Application.Product
                 CancellationToken cancellationToken
             )
             {
-                IQueryable<Domain.Product> products = _dataContext.Products.AsQueryable();
+                IQueryable<Domain.Product> products = _dataContext.Products.Include(p => p.ProductPhotos).AsQueryable();
 
                 if (request.StoreId != Guid.Empty)
                     products = products.Where(p => p.StoreId == request.StoreId);
