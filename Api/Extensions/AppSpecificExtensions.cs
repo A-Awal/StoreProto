@@ -7,13 +7,12 @@ using Application.Interfaces;
 using Infrastructure.Photos;
 using Stripe;
 using Infrastructure.Stripe;
-using Microsoft.AspNetCore.Cors;
 
 namespace Api.Extensions
 {
 	public static class AppSpecificExtensions
     {
-        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config, string MyAllowSpecificOrigins)
         {
             services.AddMediatR(typeof(Create.Handler));
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
@@ -25,11 +24,31 @@ namespace Api.Extensions
             services.AddScoped<TokenService>();
             services.AddScoped<CustomerService>();
             services.AddScoped<ChargeService>();
-            StripeConfiguration.ApiKey = config.GetValue<string>("StripeOptions:SecretKey");
+			services.AddScoped<CouponService>();
+
+			StripeConfiguration.ApiKey = config.GetValue<string>("StripeOptions:SecretKey");
 
             services.AddScoped<IStripeService, StripeService>();
-            
-            return services;
+
+			services.AddCors(options =>
+			{
+				options.AddPolicy(
+					name: MyAllowSpecificOrigins,
+					policy =>
+					{
+						policy.WithOrigins
+						(
+							"https://storefrontsmes.amalitech-dev.net",
+							"http://localhost:3002",
+							"http://localhost:5173"
+						)
+						.AllowAnyHeader()
+						.AllowAnyMethod();
+					}
+				);
+			});
+
+			return services;
         }
     }
 }

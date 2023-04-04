@@ -11,33 +11,49 @@ using Domain;
 
 namespace Application.Core
 {
-	public class AutoMapperProfile: Profile
+    public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
         {
             CreateMap<ProductDto, Domain.Product>();
             CreateMap<Domain.Product, ProductCreateParam>().ReverseMap();
-			CreateMap<Domain.Product, ProductDetail>()
-				.ForMember(pd => pd.Purchases, opt => opt.MapFrom(p => p.ProductPhotos.Select(pp => new { pp.Url })));
-                
+            CreateMap<Domain.Product, ProductDetail>()
+                .ForMember(
+                    pd => pd.Purchases,
+                    opt => opt.MapFrom(p => p.ProductPhotos.Select(pp => new { pp.Url }))
+                );
+
             CreateMap<ProductPhoto, PhotoUploadResult>();
 
-			CreateMap<Domain.Product, ProductDto>()
+            CreateMap<Domain.Product, ProductDto>()
                 .ForMember(pd => pd.StoreName, opt => opt.MapFrom(p => p.Store.StoreName));
-            
+
             CreateMap<Domain.Store, StoreDto>();
-			CreateMap<Domain.Store, GetStoreDto>()
-				.ForMember(sd => sd.Pages, opt => opt.MapFrom(s => s.Pages));
+            CreateMap<Domain.Store, GetStoreDto>()
+                .ForMember(sd => sd.Pages, opt => opt.MapFrom(s => s.Pages));
 
             CreateMap<Domain.Page, PageDto>()
-                .ForMember(td => td.HeroImage, opt => 
-                    opt.MapFrom(t => t.PagePhotos.Any()? t.PagePhotos.First(tp => tp.Id == t.HeroImage).Url:""))
-
-                .ForMember(td => td.StoreName, opt => 
-                    opt.MapFrom(t => t.Store.StoreName))
-
-                .ForMember(td => td.Logo, opt => 
-                    opt.MapFrom(t => t.PagePhotos.Any()? t.PagePhotos.First(tp => tp.Id == t.Logo).Url:""));
+                .ForMember(
+                    td => td.HeroImage,
+                    opt =>
+                        opt.MapFrom(
+                            t =>
+                                t.PagePhotos.Any()
+                                    ? t.PagePhotos.First(tp => tp.Id == t.HeroImage).Url
+                                    : ""
+                        )
+                )
+                .ForMember(td => td.StoreName, opt => opt.MapFrom(t => t.Store.StoreName))
+                .ForMember(
+                    td => td.Logo,
+                    opt =>
+                        opt.MapFrom(
+                            t =>
+                                t.PagePhotos.Any()
+                                    ? t.PagePhotos.First(tp => tp.Id == t.Logo).Url
+                                    : ""
+                        )
+                );
 
             CreateMap<CreatePageParam, Domain.Page>();
 
@@ -45,38 +61,60 @@ namespace Application.Core
             CreateMap<Purchase, PurchaseDto>()
                 .ForMember(pd => pd.Product, opt => opt.MapFrom(p => p.Product.ProductName))
                 .ForMember(pd => pd.PurchaseState, opt => opt.MapFrom(p => p.Order.OrderState))
-                .ForMember(pd => pd.DiscountAmount, opt => opt.MapFrom(p => (p.Product.UnitPrice*p.QuantityPurchased)*(p.Discount/100)))
-                .ForMember(pd => pd.AmountDue, opt => opt.MapFrom(p => (p.Product.UnitPrice*p.QuantityPurchased)*((100-p.Discount)/100)))
+                .ForMember(
+                    pd => pd.DiscountAmount,
+                    opt =>
+                        opt.MapFrom(
+                            p => (p.Product.UnitPrice * p.QuantityPurchased) * (p.Discount / 100)
+                        )
+                )
+                .ForMember(
+                    pd => pd.AmountDue,
+                    opt =>
+                        opt.MapFrom(
+                            p =>
+                                (p.Product.UnitPrice * p.QuantityPurchased)
+                                * ((100 - p.Discount) / 100)
+                        )
+                )
                 .ForMember(pd => pd.Order, opt => opt.MapFrom(p => p.Order.OrderId))
-				.ForMember(pd => pd.UnitOfMeasurement, opt => opt.MapFrom(p => p.Product.UnitOfMeasurement))
+                .ForMember(
+                    pd => pd.UnitOfMeasurement,
+                    opt => opt.MapFrom(p => p.Product.UnitOfMeasurement)
+                )
                 .ForMember(pd => pd.CustomerId, opt => opt.MapFrom(p => p.Order.CustomerId));
 
-			CreateMap<Order, OrderDto>()
-				.ForMember(od => od.Purchases, opt => opt.MapFrom(o => o.Purchases))
-				.ForMember(od => od.TotalAmount, opt =>
-					opt.MapFrom(o =>
-						o.Purchases.Aggregate(
-							(decimal)0, (purchase, next) =>
-									purchase + (next.QuantityPurchased * next.Product.UnitPrice)
-									)
-						)
-					)
-				.ForMember(od => od.Customer, opt => opt.MapFrom(o => o.Customer.FirstName));
+            CreateMap<Order, OrderDto>()
+                .ForMember(od => od.Purchases, opt => opt.MapFrom(o => o.Purchases))
+                .ForMember(
+                    od => od.TotalAmount,
+                    opt =>
+                        opt.MapFrom(
+                            o =>
+                                o.Purchases.Aggregate(
+                                    (decimal)0,
+                                    (purchase, next) =>
+                                        purchase + (next.QuantityPurchased * next.Product.UnitPrice)
+                                )
+                        )
+                )
+                .ForMember(od => od.Customer, opt => opt.MapFrom(o => o.Customer.FirstName));
 
+            //CreateMap<CreateCustomerParam, CreditCardDetail>()
+            //             .ForMember(cc => cc.ExpiryMonth, opt => opt.MapFrom(c => c.Card.ExpiryMonth))
+            //             .ForMember(cc => cc.ExpiryYear, opt => opt.MapFrom(c => c.Card.ExpiryYear))
+            //             .ForMember(cc => cc.Cvc, opt => opt.MapFrom(c => c.Card.Cvc));
 
-			//CreateMap<CreateCustomerParam, CreditCardDetail>()
-   //             .ForMember(cc => cc.ExpiryMonth, opt => opt.MapFrom(c => c.Card.ExpiryMonth))
-   //             .ForMember(cc => cc.ExpiryYear, opt => opt.MapFrom(c => c.Card.ExpiryYear))
-   //             .ForMember(cc => cc.Cvc, opt => opt.MapFrom(c => c.Card.Cvc));
-
-            CreateMap<ShippingDetails, ShippingParam>().ReverseMap();
+            CreateMap<ShippingDetails, ShippingParam>()
+                .ReverseMap();
             CreateMap<ShippingDetails, ShippingDto>();
 
-			CreateMap<CreateParam, Discount>();
-			CreateMap<Discount, DiscountDto>()
-				.ForMember(dd => dd.Expires, opt => opt.MapFrom(d => d.Expires.ToShortDateString()));
-        }   
-
-       
+            CreateMap<CreateParam, Discount>();
+            CreateMap<Discount, DiscountDto>()
+                .ForMember(
+                    dd => dd.Expires,
+                    opt => opt.MapFrom(d => d.Expires.ToShortDateString())
+                );
+        }
     }
 }

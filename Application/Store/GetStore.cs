@@ -11,7 +11,7 @@ namespace Application.Store
         public class Query : IRequest<Result<List<GetStoreDto>>>
         {
             public Guid StoreId { get; set; }
-			public Guid MerchantId { get; set; }
+            public Guid MerchantId { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<List<GetStoreDto>>>
@@ -30,26 +30,27 @@ namespace Application.Store
                 CancellationToken cancellationToken
             )
             {
-				var store = _context.Stores.Include(s => s.Pages).AsQueryable();
+                var store = _context.Stores.Include(s => s.Pages).AsQueryable();
 
+                if (store != null)
+                {
+                    if (request.MerchantId != Guid.Empty)
+                        store = store.Where(s => s.MerchantId == request.MerchantId);
 
-				if (store != null)
-				{
-					if (request.MerchantId != Guid.Empty)
-						store = store.Where(s => s.MerchantId == request.MerchantId);
+                    if (request.StoreId != Guid.Empty)
+                    {
+                        store = store.Where(s => s.StoreId == request.StoreId);
+                    }
 
-					if (request.StoreId != Guid.Empty)
-					{
-						store = store.Where(s => s.StoreId == request.StoreId);
-					}
+                    var stores = await store.ToListAsync();
+                    
+                    var storeDto = _mapper.Map<List<GetStoreDto>>(stores);
 
-					var storeDto = _mapper.Map<List<GetStoreDto>>(store);
+                    return Result<List<GetStoreDto>>.Success(storeDto);
+                }
 
-					return Result<List<GetStoreDto>>.Success(storeDto);
-				}
-
-				return Result<List<GetStoreDto>>.Failure("Store does not exist");
-			}
-		}
+                return Result<List<GetStoreDto>>.Failure("Store does not exist");
+            }
+        }
     }
 }

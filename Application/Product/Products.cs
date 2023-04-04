@@ -1,5 +1,3 @@
-using System.Linq;
-using System;
 using Application.Core;
 using AutoMapper;
 using MediatR;
@@ -11,10 +9,10 @@ namespace Application.Product
     public class Products
     {
         public class Query : IRequest<Result<List<ProductDto>>>
-        { 
-            public Guid StoreId {get; set;}
-            public string ProductName {get; set; }
-            public string ProductCategory {get; set; }
+        {
+            public Guid StoreId { get; set; }
+            public string ProductName { get; set; }
+            public string ProductCategory { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<List<ProductDto>>>
@@ -35,18 +33,22 @@ namespace Application.Product
             {
                 IQueryable<Domain.Product> products = _dataContext.Products.AsQueryable();
 
-                if(request.StoreId != Guid.Empty)
+                if (request.StoreId != Guid.Empty)
                     products = products.Where(p => p.StoreId == request.StoreId);
 
-                if(!string.IsNullOrEmpty(request.ProductName))
-                    products = products.Where(p => p.ProductName.ToLower().Contains(request.ProductName.ToLower()));
+                if (!string.IsNullOrEmpty(request.ProductName))
+                    products = products.Where(
+                        p => p.ProductName.ToLower().Contains(request.ProductName.ToLower())
+                    );
 
-                if( !string.IsNullOrEmpty(request.ProductCategory) )
-                    products = products.Where(p => p.ProductCategory.ToLower().Contains(request.ProductCategory.ToLower()));
+                if (!string.IsNullOrEmpty(request.ProductCategory))
+                    products = products.Where(
+                        p => p.ProductCategory.ToLower().Contains(request.ProductCategory.ToLower())
+                    );
 
                 List<Domain.Product> productsToSend = await products.ToListAsync();
 
-               List<ProductDto> productDto = _mapper.Map<List<ProductDto>>(productsToSend);
+                List<ProductDto> productDto = _mapper.Map<List<ProductDto>>(productsToSend);
 
                 return Result<List<ProductDto>>.Success(productDto);
             }

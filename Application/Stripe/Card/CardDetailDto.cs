@@ -1,4 +1,4 @@
 namespace Application.Stripe.Card
 {
-	public record CardDetailDto (string Name, string Method, string Description);
+	public record CardDetailDto (string number, string Method, string Description);
 }

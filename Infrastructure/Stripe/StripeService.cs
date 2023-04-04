@@ -5,6 +5,7 @@ using Application.Stripe.Card;
 using Application.Stripe.Charge;
 using Domain;
 using Stripe;
+using Charge = Stripe.Charge;
 
 namespace Infrastructure.Stripe
 {
@@ -13,7 +14,6 @@ namespace Infrastructure.Stripe
         private readonly TokenService _tokenService;
         private readonly CustomerService _customerService;
         private readonly ChargeService _chargeService;
-		private readonly CouponService _couponService;
 
 		public StripeService(
             TokenService tokenService,
@@ -27,7 +27,7 @@ namespace Infrastructure.Stripe
 		}
 
 		public async Task<CustomerResource> CreateCardCustomer(
-			Application.Stripe.Card.CreateCardCustomerParam param,
+			CreateCardCustomerParam param,
             CancellationToken cancellationToken
         )
         {
@@ -70,7 +70,7 @@ namespace Infrastructure.Stripe
         }
 
 		public async Task<CustomerResource> CreateBankCustomer(
-		   Application.Stripe.Bank.CreateBankCustomerParam param,
+		   CreateBankCustomerParam param,
 		   CancellationToken cancellationToken
 		)
 		{
@@ -147,16 +147,16 @@ namespace Infrastructure.Stripe
 
 		
 
-		public async  Task<object> GetDetail(string stripeCustomerId)
+		public async  Task<object> GetCustomerDetail(string stripeCustomerId)
 		{
 			var detail = await _customerService.GetAsync(stripeCustomerId);
 
 			if(detail.StripeResponse.StatusCode == System.Net.HttpStatusCode.OK)
 			{
-			if (detail.Object == "card")
-				return new CardDetailDto(detail.Name, detail.Object, detail.Description);
+				if (detail.Object == "card")
+					return new CardDetailDto(detail.Name, detail.Phone, detail.Description);
 
-			return new BankDetailDto(detail.Object, detail.Email);
+				return new BankDetailDto(detail.Name, detail.Email);
 			}
 
 			throw new Exception(message:detail.StripeResponse.Content);
@@ -192,6 +192,48 @@ namespace Infrastructure.Stripe
 
 				return new CustomerResource(customer.Id, customer.Email, customer.Name);
 		}
+
+		public async Task<StripeList<Charge>> GetAllCharges()
+		{
+			var options = new ChargeListOptions
+			{
+					
+			};
+
+			var service = new ChargeService();
+
+			StripeList<Charge> charges = await service.ListAsync(options);
+
+			return charges;
+		}
+		public async Task<InternalChargeResourceDto> GetCharge(string chargeId)
+		{
+			var service = new ChargeService();
+			Charge charge = await service.GetAsync(chargeId);
+
+			var chargeDto = new InternalChargeResourceDto
+			{
+				Method = charge.PaymentMethodDetails.Card.Brand,
+				AmountPaid = charge.Amount,
+				StripeCustomerId = charge.CustomerId
+			};
+			
+			return chargeDto;
+		}
+
+		public async Task<ChargeResourceDto> GetCardOrBankDetail(string chargeId)
+		{
+			var service = new CustomerService();
+			var customer = await service.GetAsync(chargeId);
+
+			var chargeDto = new ChargeResourceDto
+			{
+				StripeName = customer.Name,
+				PhoneNumber = customer.Phone
+			};
+			return chargeDto;
+		}
+
 
 
 

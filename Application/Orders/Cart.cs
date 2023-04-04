@@ -46,7 +46,8 @@ namespace Application.Orders
 					cartt = cartt.Where(o =>
 						o.OrderState == Domain.OrderStates.processing
 					);
-
+                
+                var cartTosend = await cartt.ToListAsync();
                 var cart = _mapper.Map<List<OrderDto>>(cartt);
 
                 if (cart == null)

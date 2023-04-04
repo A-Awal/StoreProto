@@ -33,7 +33,9 @@ namespace Application.Shipping
 			{
 				var shippingDetailToUpdate = _context.ShipingDetails.Find(request.ShippingDetailId);
 
-				shippingDetailToUpdate.Location = request.UpdateParam.Location;
+				shippingDetailToUpdate.Address = request.UpdateParam.Address;
+				shippingDetailToUpdate.PhoneNumber = request.UpdateParam.PhoneNumber;
+				shippingDetailToUpdate.StreetName = request.UpdateParam.StreetName;
 
 				_context.ShipingDetails.Update(shippingDetailToUpdate);
 
