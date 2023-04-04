@@ -1,3 +1,5 @@
+using System.Linq;
+using System;
 using Application.Core;
 using AutoMapper;
 using MediatR;
@@ -11,6 +13,8 @@ namespace Application.Product
         public class Query : IRequest<Result<List<ProductDto>>>
         { 
             public Guid StoreId {get; set;}
+            public string ProductName {get; set; }
+            public string ProductCategory {get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<List<ProductDto>>>
@@ -29,12 +33,21 @@ namespace Application.Product
                 CancellationToken cancellationToken
             )
             {
-                List<ProductDto> products = await _dataContext.Products
-                    .Where(p => p.StoreId == request.StoreId)
-                    .Select(p => _mapper.Map<ProductDto>(p))
-                    .ToListAsync();
+                IQueryable<Domain.Product> products = _dataContext.Products;
 
-                return Result<List<ProductDto>>.Success(products);
+                if(request.StoreId != Guid.Empty)
+                    products = products.Where(p => p.StoreId == request.StoreId);
+
+                if(!string.IsNullOrEmpty(request.ProductName))
+                    products = products.Where(p => p.ProductName.Contains(request.ProductName));
+
+                if( !string.IsNullOrEmpty(request.ProductCategory))
+                    products = products.Where(p => p.ProductName.Contains(request.ProductName));
+
+                List<Domain.Product> productsToSend = await products.ToListAsync();
+               List<ProductDto> productDto = _mapper.Map<List<ProductDto>>(productsToSend);
+
+                return Result<List<ProductDto>>.Success(productDto);
             }
         }
     }

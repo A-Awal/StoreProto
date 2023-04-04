@@ -14,9 +14,22 @@ namespace API.Controllers
         }
 
         [HttpGet("Search")]
-        public async Task<IActionResult> GetProduct(Guid storeId)
+        public async Task<IActionResult> GetProduct(
+            Guid storeId,
+            string productCategory,
+            string productName
+        )
         {
-            return HandleResult(await _mediator.Send(new Products.Query {StoreId = storeId }));
+            return HandleResult(
+                await _mediator.Send(
+                    new Products.Query
+                    {
+                        StoreId = storeId,
+                        ProductCategory = productCategory,
+                        ProductName = productName
+                    }
+                )
+            );
         }
 
         [HttpPost("Create")]
