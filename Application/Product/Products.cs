@@ -33,18 +33,19 @@ namespace Application.Product
                 CancellationToken cancellationToken
             )
             {
-                IQueryable<Domain.Product> products = _dataContext.Products;
+                IQueryable<Domain.Product> products = _dataContext.Products.AsQueryable();
 
                 if(request.StoreId != Guid.Empty)
                     products = products.Where(p => p.StoreId == request.StoreId);
 
                 if(!string.IsNullOrEmpty(request.ProductName))
-                    products = products.Where(p => p.ProductName.Contains(request.ProductName));
+                    products = products.Where(p => p.ProductName.ToLower().Contains(request.ProductName.ToLower()));
 
-                if( !string.IsNullOrEmpty(request.ProductCategory))
-                    products = products.Where(p => p.ProductName.Contains(request.ProductCategory));
+                if( !string.IsNullOrEmpty(request.ProductCategory) )
+                    products = products.Where(p => p.ProductCategory.ToLower().Contains(request.ProductCategory.ToLower()));
 
                 List<Domain.Product> productsToSend = await products.ToListAsync();
+
                List<ProductDto> productDto = _mapper.Map<List<ProductDto>>(productsToSend);
 
                 return Result<List<ProductDto>>.Success(productDto);
