@@ -42,7 +42,7 @@ namespace Application.Product
                     products = products.Where(p => p.ProductName.Contains(request.ProductName));
 
                 if( !string.IsNullOrEmpty(request.ProductCategory))
-                    products = products.Where(p => p.ProductName.Contains(request.ProductName));
+                    products = products.Where(p => p.ProductName.Contains(request.ProductCategory));
 
                 List<Domain.Product> productsToSend = await products.ToListAsync();
                List<ProductDto> productDto = _mapper.Map<List<ProductDto>>(productsToSend);
