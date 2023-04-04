@@ -24,6 +24,8 @@ namespace Application.Core
                 );
 
             CreateMap<ProductPhoto, PhotoUploadResult>();
+            CreateMap<PagePhoto, PhotoUploadResult>();
+
 
             CreateMap<Domain.Product, ProductDto>()
                 .ForMember(pd => pd.ProductPhotos, opt => opt.MapFrom(p => p.ProductPhotos))
