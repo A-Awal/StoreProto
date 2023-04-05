@@ -7,7 +7,7 @@ namespace Application.Product
     {
         public Guid ProductId { get; set; }
         public string StoreName { get; set; }
-        public List<PhotoUploadResult> ProductPhotos { get; set; } 
-
+        public string DefaultImage { get; set; }
+        public List<PhotoUploadResult> ProductPhotos { get; set; }
     }
 }
