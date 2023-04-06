@@ -121,7 +121,8 @@ namespace Application.Core
                     opt => opt.MapFrom(d => d.Expires.ToShortDateString())
                 );
 
-            CreateMap<CustomerReview, ReviewDto>();
+            CreateMap<CustomerReview, ReviewInternalDto>()
+            .ForMember(r => r.Customer, opt => opt.MapFrom(cr => cr.Customer.FirstName));
             CreateMap<ReviewReply, ReplyDto>();
 
         }

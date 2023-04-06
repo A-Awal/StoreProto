@@ -1,10 +1,7 @@
-using Application.ReviewReplies;
-
 namespace Application.Reviews
 {
-    public class ReviewDto
+    public class ReviewAbstract
     {
-        
         public int Rating { get; set; }
         public string Comment { get; set; }
         public DateTime DateCommented { get; set; }

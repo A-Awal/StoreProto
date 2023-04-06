@@ -8,7 +8,7 @@ namespace Application.Product
 {
     public class ProductDetail : ProductAbstract
 	{
-		public ICollection<ReviewDto> Reviews { get; set; }
+		public ICollection<ReviewInternalDto> Reviews { get; set; } = new List<ReviewInternalDto>();
 		public ICollection<PhotoUploadResult> ProductPhotos { get; set; }
 	}
 }

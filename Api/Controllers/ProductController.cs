@@ -1,4 +1,5 @@
 using Application.Product;
+using Application.ReviewReplies;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,6 @@ namespace API.Controllers
 
         [HttpGet("Search")]
         public async Task<IActionResult> SearchProducts(
-            Guid storeId,
             string productCategory,
             string productName
         )
@@ -24,9 +24,26 @@ namespace API.Controllers
                 await _mediator.Send(
                     new Products.Query
                     {
-                        StoreId = storeId,
+                        StoreId = Guid.Empty,
                         ProductCategory = productCategory,
                         ProductName = productName
+                    }
+                )
+            );
+        }
+
+        [HttpGet("GetStoreProducts")]
+        public async Task<IActionResult> GetStoreProducts(
+            Guid storeId
+        )
+        {
+            return HandleResult(
+                await _mediator.Send(
+                    new Products.Query
+                    {
+                        StoreId = storeId,
+                        ProductCategory = string.Empty,
+                        ProductName = string.Empty
                     }
                 )
             );
@@ -35,9 +52,14 @@ namespace API.Controllers
         [HttpPost("GetProduct")]
         public async Task<IActionResult> CreateProduct(Guid productId)
         {
+            var result = await _mediator.Send(new Details.Query { ProductId = productId });
+            if(!result.IsSuccess)
+                return HandleResult(result);
+
             return HandleResult(
-                await _mediator.Send(new Details.Query { ProductId = productId })
+                await _mediator.Send(new GetReply.Query { ProductDetail = result.Value })
             );
+
         }
 
         [HttpPost("Create")]
