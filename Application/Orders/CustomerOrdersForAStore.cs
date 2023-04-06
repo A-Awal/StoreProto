@@ -38,7 +38,11 @@ namespace Application.Orders
                          .ThenInclude(p => p.Product)
                      .Where(o => o.CustomerId == request.CustomerId)
                      .AsQueryable();
-                var cart = await cartt.Where(o => o.OrderState == OrderStates.processing).ToListAsync();
+                if(request.Cart)
+                    cartt.Where(o => o.OrderState == OrderStates.processing);
+
+                var cart = await cartt.ToListAsync(cancellationToken);
+
                 var cartToSend = _mapper.Map<List<OrderDto>>(cart);
 
                 if (cartToSend == null)

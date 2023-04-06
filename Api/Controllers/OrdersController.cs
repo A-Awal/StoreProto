@@ -95,8 +95,18 @@ namespace API.Controllers
             );
         }
 
-        [HttpGet("CustomerOrdersForThisStore")]
-        public async Task<IActionResult> CustomerOrderofStore(Guid customerId, Guid storeId)
+        [HttpGet("CustomerCartForThisStore")]
+        public async Task<IActionResult> CustomerCartForStore(Guid customerId, Guid storeId)
+        {
+            var dto = await Mediator.Send(new CustomerOrdersForAStore.Query { CustomerId = customerId, StoreId = storeId , Cart = true });
+
+            return HandleResult(
+                await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })
+            );
+        }
+
+        [HttpGet("CustomerOrderForStore")]
+        public async Task<IActionResult> CustomerOrderForStore(Guid customerId, Guid storeId)
         {
             var dto = await Mediator.Send(new CustomerOrdersForAStore.Query { CustomerId = customerId, StoreId = storeId , Cart = false });
 
