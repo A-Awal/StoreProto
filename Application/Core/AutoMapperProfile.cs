@@ -4,6 +4,8 @@ using Application.Page;
 using Application.Photos;
 using Application.Product;
 using Application.Purchases;
+using Application.ReviewReplies;
+using Application.Reviews;
 using Application.Shipping;
 using Application.Store;
 using AutoMapper;
@@ -18,10 +20,9 @@ namespace Application.Core
             CreateMap<ProductDto, Domain.Product>();
             CreateMap<Domain.Product, ProductCreateParam>().ReverseMap();
             CreateMap<Domain.Product, ProductDetail>()
-                .ForMember(
-                    pd => pd.Purchases,
-                    opt => opt.MapFrom(p => p.ProductPhotos.Select(pp => new { pp.Url }))
-                );
+                .ForMember(p =>p.Reviews, opt => opt.MapFrom(p => p.Reviews))
+                .ForMember(p =>p.ProductPhotos, opt => opt.MapFrom(p => p.ProductPhotos));
+                
 
             CreateMap<ProductPhoto, PhotoUploadResult>();
             CreateMap<PagePhoto, PhotoUploadResult>();
@@ -119,6 +120,11 @@ namespace Application.Core
                     dd => dd.Expires,
                     opt => opt.MapFrom(d => d.Expires.ToShortDateString())
                 );
+
+            CreateMap<CustomerReview, ReviewDto>();
+            CreateMap<ReviewReply, ReplyDto>();
+
         }
+
     }
 }

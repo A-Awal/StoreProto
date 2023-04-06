@@ -8,12 +8,12 @@ namespace Application.Product
 {
     public class Details
     {
-        public class Command : IRequest<Result<ProductDetail>>
+        public class Query : IRequest<Result<ProductDetail>>
         {
             public Guid ProductId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, Result<ProductDetail>>
+        public class Handler : IRequestHandler<Query, Result<ProductDetail>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace Application.Product
             }
 
             public async Task<Result<ProductDetail>> Handle(
-                Command request,
+                Query request,
                 CancellationToken cancellationToken
             )
             {
@@ -33,7 +33,6 @@ namespace Application.Product
                     .Include(p => p.ProductPhotos)
                     .Include(p => p.Reviews)
                     .ThenInclude(r => r.ReviewReply)
-                    .Include(p => p.Purchases)
                     .FirstOrDefaultAsync(p => p.ProductId == request.ProductId);
 
                 if (product == null)

@@ -14,7 +14,7 @@ namespace API.Controllers
         }
 
         [HttpGet("Search")]
-        public async Task<IActionResult> GetProduct(
+        public async Task<IActionResult> SearchProducts(
             Guid storeId,
             string productCategory,
             string productName
@@ -29,6 +29,14 @@ namespace API.Controllers
                         ProductName = productName
                     }
                 )
+            );
+        }
+
+        [HttpPost("GetProduct")]
+        public async Task<IActionResult> CreateProduct(Guid productId)
+        {
+            return HandleResult(
+                await _mediator.Send(new Details.Query { ProductId = productId })
             );
         }
 
