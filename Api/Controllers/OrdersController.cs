@@ -95,6 +95,16 @@ namespace API.Controllers
             );
         }
 
+        [HttpGet("CustomerOrdersForThisStore")]
+        public async Task<IActionResult> CustomerOrderofStore(Guid customerId, Guid storeId)
+        {
+            var dto = await Mediator.Send(new CustomerOrdersForAStore.Query { CustomerId = customerId, StoreId = storeId , Cart = false });
+
+            return HandleResult(
+                await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })
+            );
+        }
+
         [HttpGet("GetStoreOrders")]
         public async Task<IActionResult> StoreOrders(Guid storeId)
         {
