@@ -1,3 +1,4 @@
+using System.Linq;
 using Application.DiscountAndPromotions;
 using Application.Orders;
 using Application.Purchases;
@@ -80,9 +81,9 @@ namespace API.Controllers
         {
             var dto = await Mediator.Send(new Cart.Query { CustomerId = customerId, Cart = true });
 
-            return HandleResult(
-                await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })
-            );
+            var withTotals = await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value });
+
+            return Ok(withTotals.Value.First());
         }
 
         [HttpGet("CustomerOrders")]
