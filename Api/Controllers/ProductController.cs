@@ -34,7 +34,8 @@ namespace API.Controllers
 
         [HttpGet("GetStoreProducts")]
         public async Task<IActionResult> GetStoreProducts(
-            Guid storeId
+            Guid storeId,
+            string category
         )
         {
             return HandleResult(
@@ -42,8 +43,22 @@ namespace API.Controllers
                     new Products.Query
                     {
                         StoreId = storeId,
-                        ProductCategory = string.Empty,
+                        ProductCategory = category,
                         ProductName = string.Empty
+                    }
+                )
+            );
+        }
+        [HttpGet("GetStoreCategories")]
+        public async Task<IActionResult> GetStoreCategories(
+            Guid storeId
+        )
+        {
+            return HandleResult(
+                await _mediator.Send(
+                    new GetStoreProductCategories.Query
+                    {
+                        StoreId = storeId,
                     }
                 )
             );
