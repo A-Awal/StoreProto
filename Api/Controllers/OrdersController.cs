@@ -83,7 +83,7 @@ namespace API.Controllers
 
             var withTotals = await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value });
 
-            return Ok(withTotals.Value.First());
+            return Ok(withTotals.Value.FirstOrDefault());
         }
 
         [HttpGet("CustomerOrders")]
@@ -111,8 +111,8 @@ namespace API.Controllers
         {
             var dto = await Mediator.Send(new CustomerOrdersForAStore.Query { CustomerId = customerId, StoreId = storeId , Cart = false });
 
-            return HandleResult(
-                await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })
+            return Ok(
+                (await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })).Value.FirstOrDefault()
             );
         }
 
@@ -127,8 +127,8 @@ namespace API.Controllers
         [HttpGet("GetStoreCart")]
         public async Task<IActionResult> StoreCart(Guid storeId)
         {
-            return HandleResult(
-                await Mediator.Send(new GetCustomerOrders.Query { StoreId = storeId, Cart = true })
+            return Ok(
+                (await Mediator.Send(new GetCustomerOrders.Query { StoreId = storeId, Cart = true })).Value.FirstOrDefault()
             );
         }
 
