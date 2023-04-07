@@ -101,18 +101,18 @@ namespace API.Controllers
         {
             var dto = await Mediator.Send(new CustomerOrdersForAStore.Query { CustomerId = customerId, StoreId = storeId , Cart = true });
 
-            return HandleResult(
-                await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })
+            return Ok(
+                (await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })).Value.FirstOrDefault()
             );
         }
 
-        [HttpGet("CustomerOrderForStore")]
+        [HttpGet("CustomerOrdersForStore")]
         public async Task<IActionResult> CustomerOrderForStore(Guid customerId, Guid storeId)
         {
             var dto = await Mediator.Send(new CustomerOrdersForAStore.Query { CustomerId = customerId, StoreId = storeId , Cart = false });
 
-            return Ok(
-                (await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })).Value.FirstOrDefault()
+            return HandleResult(
+                await Mediator.Send(new CalculateTotals.Query { OrderDto = dto.Value })
             );
         }
 
