@@ -19,9 +19,9 @@ namespace Application.Core
         {
             CreateMap<ProductDto, Domain.Product>();
             CreateMap<Domain.Product, ProductCreateParam>().ReverseMap();
-            CreateMap<Domain.Product, ProductDetail>()
-                .ForMember(p =>p.Reviews, opt => opt.MapFrom(p => p.Reviews))
-                .ForMember(p =>p.ProductPhotos, opt => opt.MapFrom(p => p.ProductPhotos));
+            // CreateMap<Domain.Product, ProductDetail>()
+            //     .ForMember(p =>p.Reviews, opt => opt.MapFrom(p => p.Reviews))
+            //     .ForMember(p =>p.ProductPhotos, opt => opt.MapFrom(p => p.ProductPhotos));
                 
 
             CreateMap<ProductPhoto, PhotoUploadResult>();
@@ -30,6 +30,7 @@ namespace Application.Core
 
             CreateMap<Domain.Product, ProductDto>()
                 .ForMember(pd => pd.ProductPhotos, opt => opt.MapFrom(p => p.ProductPhotos))
+                .ForMember(p =>p.Reviews, opt => opt.MapFrom(p => p.Reviews))
                 .ForMember(pd => pd.DefaultImage, opt => opt.MapFrom(p => p.ProductPhotos.Aggregate("", (url, next)=> next.Url != null? next.Url: "" )))
                 .ForMember(pd => pd.StoreName, opt => opt.MapFrom(p => p.Store.StoreName));
 

@@ -64,7 +64,7 @@ namespace API.Controllers
             );
         }
 
-        [HttpPost("GetProduct")]
+        [HttpGet("GetProduct")]
         public async Task<IActionResult> CreateProduct(Guid productId)
         {
             var result = await _mediator.Send(new Details.Query { ProductId = productId });
@@ -72,7 +72,7 @@ namespace API.Controllers
                 return HandleResult(result);
 
             return HandleResult(
-                await _mediator.Send(new GetReply.Query { ProductDetail = result.Value })
+                await _mediator.Send(new GetReply.Query { ProductDto = result.Value })
             );
 
         }

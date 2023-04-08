@@ -8,12 +8,12 @@ namespace Application.Product
 {
     public class Details
     {
-        public class Query : IRequest<Result<ProductDetail>>
+        public class Query : IRequest<Result<ProductDto>>
         {
             public Guid ProductId { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<ProductDetail>>
+        public class Handler : IRequestHandler<Query, Result<ProductDto>>
         {
             private readonly AppDataContext _context;
             private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace Application.Product
                 _mapper = mapper;
             }
 
-            public async Task<Result<ProductDetail>> Handle(
+            public async Task<Result<ProductDto>> Handle(
                 Query request,
                 CancellationToken cancellationToken
             )
@@ -37,12 +37,12 @@ namespace Application.Product
 
                 if (product == null)
                 {
-                    return Result<ProductDetail>.Failure("Product does not exist");
+                    return Result<ProductDto>.Failure("Product does not exist");
                 }
 
-                var productDetail = _mapper.Map<ProductDetail>(product);
+                var productDetail = _mapper.Map<ProductDto>(product);
 
-                return Result<ProductDetail>.Success(productDetail);
+                return Result<ProductDto>.Success(productDetail);
             }
         }
     }
