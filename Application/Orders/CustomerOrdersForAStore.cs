@@ -36,6 +36,7 @@ namespace Application.Orders
                      .Include(o => o.Customer)
                      .Include(o => o.Purchases.Where(p => p.Product.StoreId == request.StoreId))
                          .ThenInclude(p => p.Product)
+                         .ThenInclude(ph => ph.ProductPhotos)
                      .Where(o => o.CustomerId == request.CustomerId)
                      .AsQueryable();
                 if(request.Cart)

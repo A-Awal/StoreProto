@@ -5,7 +5,8 @@ namespace Application.Purchases
 	public class PurchaseDto : PurchaseAbstract
 	{
 		public Guid OrderId { get; set; }
-		public string Product { get; set; }
+		public string ProductDescription { get; set; }
+		public string ProductDefaultImage { get; set; }
 		public DateTime DatePurchased { get; set; }
 		public string PurchaseState { get; set; }
 		public Guid Order { get; set; }

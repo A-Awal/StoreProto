@@ -65,7 +65,8 @@ namespace Application.Core
 
             CreateMap<Purchase, PurchaseCreateParam>().ReverseMap();
             CreateMap<Purchase, PurchaseDto>()
-                .ForMember(pd => pd.Product, opt => opt.MapFrom(p => p.Product.ProductName))
+                .ForMember(pd => pd.ProductDescription, opt => opt.MapFrom(p => p.Product.ProductName))
+                .ForMember(pd => pd.ProductDefaultImage, opt => opt.MapFrom(p => p.Product.ProductPhotos.Aggregate("", (url, next)=> next.Url != null? next.Url: "" )))
                 .ForMember(pd => pd.PurchaseState, opt => opt.MapFrom(p => p.Order.OrderState))
                 .ForMember(
                     pd => pd.DiscountAmount,
