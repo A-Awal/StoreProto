@@ -14,5 +14,6 @@ namespace Application.Purchases
 		public decimal DiscountAmount { get; set; }
 		public	decimal AmountDue { get; set; }
 		public string UnitOfMeasurement {get; set;}
+		public decimal QuantityRemaining {get; set;}
 	}
 }
